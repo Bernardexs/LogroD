@@ -1,0 +1,7 @@
+{
+  "name": "LogroD",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
