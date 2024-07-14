@@ -19,6 +19,10 @@ const routes: Routes = [
     path: 'iniciar-sesion',
     loadChildren: () => import('./paginas/login/iniciar-sesion/iniciar-sesion.module').then( m => m.IniciarSesionPageModule)
   },
+  {
+    path: 'registro',
+    loadChildren: () => import('./paginas/login/registro/registro.module').then( m => m.RegistroPageModule)
+  },
 
 
 
