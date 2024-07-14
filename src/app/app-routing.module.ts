@@ -15,7 +15,11 @@ const routes: Routes = [
   {
     path: 'bienvenida',
     loadChildren: () => import('./paginas/login/bienvenida/bienvenida.module').then( m => m.BienvenidaPageModule)
+  },  {
+    path: 'iniciar-sesion',
+    loadChildren: () => import('./paginas/login/iniciar-sesion/iniciar-sesion.module').then( m => m.IniciarSesionPageModule)
   },
+
 
 
 
