@@ -5,13 +5,20 @@ const routes: Routes = [
 
   {
     path: '',
-    redirectTo: 'auth',
+    redirectTo: 'bienvenida',
     pathMatch: 'full'
   },
   {
     path: 'auth',
     loadChildren: () => import('./pages/auth/auth.module').then( m => m.AuthPageModule)
   },
+  {
+    path: 'bienvenida',
+    loadChildren: () => import('./paginas/login/bienvenida/bienvenida.module').then( m => m.BienvenidaPageModule)
+  },
+
+
+
 
 ];
 
