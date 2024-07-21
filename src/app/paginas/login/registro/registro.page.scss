@@ -2,6 +2,15 @@ ion-content {
     --background: linear-gradient(90deg, #f9f9f9 0%, #ebebf0 50%);
     font-family: sans-serif;
   }
+  /* En styles.scss o registro.page.scss */
+/* registro.page.scss */
+.error-message {
+  color: red;
+  font-size: 14px;
+  margin-top: 5px;
+}
+
+
   
   .texto {
     background-color: #ffffff;
