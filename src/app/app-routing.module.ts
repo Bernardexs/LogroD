@@ -26,7 +26,11 @@ const routes: Routes = [
   {
     path: 'home',
     loadChildren: () => import('./home/home.module').then( m => m.HomePageModule),canActivate:[HomeGuard]
+  },  {
+    path: 'add-update-task',
+    loadChildren: () => import('./add-update-task/add-update-task.module').then( m => m.AddUpdateTaskPageModule)
   },
+
 
 
 

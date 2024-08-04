@@ -1,0 +1,29 @@
+.validators {
+    color: red;
+    font-size: 0.875em;
+    margin-left: 16px;
+    margin-top: 8px;
+  }
+  
+  .range-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 16px;
+  }
+  
+  ion-range {
+    --bar-background: rgba(128, 128, 128, 0.281);
+    --bar-background-active: var(--ion-color-success);
+    --height: 20px;
+    --knob-size: 5px;
+    width: 90%; /* Adjust the width to fit within the modal */
+  }
+
+  .item-reorder {
+    --min-height: 32px;
+  }
+  
+  ion-footer {
+    background: var(--ion-color-light);
+  }
+  

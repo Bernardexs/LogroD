@@ -35,3 +35,17 @@
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 @import "@ionic/angular/css/palettes/dark.system.css";
+.add-update-modal {
+    --height: 95%;
+    --border-radius: 20px;
+  }
+  
+  @media screen and (max-width: 768px) {
+    .add-update-modal {
+      --height: 100%;
+      --border-radius: 0;
+    }
+  }
+  @import 'swiper/css';
+
+  

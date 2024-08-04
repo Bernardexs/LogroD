@@ -1,48 +1,137 @@
 import { Injectable, inject } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword,fetchSignInMethodsForEmail, linkWithCredential,FacebookAuthProvider , updateProfile, sendPasswordResetEmail, signInWithPopup, GoogleAuthProvider, AuthCredential } from 'firebase/auth';
-import { User } from '../models/user.model';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { getFirestore, setDoc, doc, getDoc } from '@angular/fire/firestore';
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile, sendPasswordResetEmail, signInWithPopup, GoogleAuthProvider, FacebookAuthProvider, AuthCredential, fetchSignInMethodsForEmail, linkWithCredential } from 'firebase/auth';
+import { User } from '../models/user.model';
+import { Task } from '../models/task.model';
 import { UtilsService } from './utils.service';
 import { Observable } from 'rxjs';
 import firebase from 'firebase/compat/app';
 import { Router } from '@angular/router';
+import { gapi } from 'gapi-script';
 
+// Declara los objetos google y gapi
+declare var google: any;
 
 @Injectable({
   providedIn: 'root'
 })
 export class FirebaseService {
-
   authState$!: Observable<any>;
+  calendarItems!: any[];
+  user$!: Observable<firebase.User>;
 
   auth = inject(AngularFireAuth);
   firestore = inject(AngularFirestore);
   utilService = inject(UtilsService);
-  router=inject(Router)
-  private provider: FacebookAuthProvider;  // ======================= Autenticación =======================
+  router = inject(Router);
+  private provider: FacebookAuthProvider;
+
   constructor() {
-    this.provider = new FacebookAuthProvider(); // Inicializa provider en el constructor
+    this.initClient();
+    this.provider = new FacebookAuthProvider();
   }
+
+  initClient() {
+    google.accounts.id.initialize({
+      client_id: '548073834016-57t9d1t9mb6s4j877sbbuu07t37fo617.apps.googleusercontent.com',
+      callback: this.handleCredentialResponse.bind(this)
+    });
+    google.accounts.id.prompt();
+
+    gapi.load('client:auth2', () => {
+      console.log('entro a client');
+      gapi.client.init({
+        apiKey: 'AIzaSyCbwvYbyo_8_ZFVzspr2owyy4rSja5zkE0',
+        clientId: '548073834016-57t9d1t9mb6s4j877sbbuu07t37fo617.apps.googleusercontent.com',
+        discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"],
+        scope: 'https://www.googleapis.com/auth/calendar'
+      });
+      gapi.client.load('calendar', 'v3', () => console.log('loaded calendar'));
+    });
+  }
+
+  handleCredentialResponse(response: any) {
+    console.log("Encoded JWT ID token: " + response.credential);
+    const credential = GoogleAuthProvider.credential(response.credential);
+    this.auth.signInWithCredential(credential).then(() => {
+      console.log("User signed in successfully");
+    }).catch((error) => {
+      console.error("Error signing in", error);
+    });
+  }
+
+  async getCalendarEvents() {
+    try {
+      const events = await gapi.client.calendar.events.list({
+        calendarId: 'primary',
+        timeMin: new Date().toISOString(),
+        showDeleted: false,
+        singleEvents: true,
+        maxResults: 10,
+        orderBy: 'startTime'
+      });
+
+      return events.result.items.map((event: any) => ({
+        title: event.summary,
+        description: event.description,
+        startTime: new Date(event.start.dateTime),
+        endTime: new Date(event.end.dateTime),
+        allDay: false
+      }));
+    } catch (error) {
+      console.error('Error fetching Google Calendar events', error);
+      throw error;
+    }
+  }
+
+  async insertEvent(task: Task) {
+    const startTime = typeof task.startTime === 'string' ? new Date(task.startTime).toISOString() : (task.startTime as Date).toISOString();
+    const endTime = typeof task.endTime === 'string' ? new Date(task.endTime).toISOString() : (task.endTime as Date).toISOString();
+
+    const event = {
+      summary: task.title,
+      description: task.description,
+      start: {
+        dateTime: startTime,
+        timeZone: 'America/Los_Angeles'
+      },
+      end: {
+        dateTime: endTime,
+        timeZone: 'America/Los_Angeles'
+      },
+    };
+
+    try {
+      const response = await gapi.client.calendar.events.insert({
+        calendarId: 'primary',
+        resource: event,
+      });
+
+      console.log('Event created: ', response);
+      return response;
+    } catch (error) {
+      console.error('Error creating event: ', error);
+      throw error;
+    }
+  }
+
+  // Otros métodos...
+
   getAuth() {
     return getAuth();
   }
 
-  // ========== Acceder ==========
   signIn(user: User) {
     return signInWithEmailAndPassword(getAuth(), user.email, user.password);
   }
 
-  // ========== Crear usuario ==========
   signUp(user: User) {
     return createUserWithEmailAndPassword(getAuth(), user.email, user.password);
   }
 
-  // ======= Actualizar usuario =======
   async updateUser(displayName: string): Promise<void> {
     const user = await this.auth.currentUser;
-
     if (user) {
       return updateProfile(user, { displayName });
     } else {
@@ -50,55 +139,46 @@ export class FirebaseService {
     }
   }
 
-  // ======= Enviar email para reestablecer contraseña =======
   sendRecoveryEmail(email: string): Promise<any> {
     const auth = getAuth();
     return sendPasswordResetEmail(auth, email)
       .then((response) => {
-        // Aquí retornamos toda la información que devuelve Firebase
         return response;
       })
       .catch((error) => {
-        // En caso de error, también retornamos toda la información del error
         return Promise.reject(error);
       });
   }
 
-  // ================= Base de datos =================
-
-  //======== Setear un documento =============
   setDocument(path: string, data: any) {
-    return setDoc(doc(getFirestore(), path), data);
+    return this.firestore.doc(path).set(data);
   }
 
-  //======== Obtener un documento =============
   async getDocument(path: string) {
-    return (await getDoc(doc(getFirestore(), path))).data();
+    return (await this.firestore.doc(path).get());
   }
 
-  // ====== Cerrar Sesión ======
   async signOut() {
     const auth = getAuth();
     await auth.signOut();
-  
-    // Cerrar sesión de Facebook si es necesario
-  
-  
     localStorage.removeItem('user');
     this.utilService.routerLink('/bienvenida');
   }
+
   signInWithGoogle() {
     return this.auth.signInWithPopup(new firebase.auth.GoogleAuthProvider())
       .then((result) => {
-        console.log('Usuario autenticado:', result.user);
-        if (result.user) {
-          localStorage.setItem('user', JSON.stringify(result.user));
-          console.log('Usuario almacenado en localStorage:', JSON.stringify(result.user));
+        const user = result.user;
+        if (user) {
+          localStorage.setItem('user', JSON.stringify({
+            uid: user.uid,
+            email: user.email,
+            displayName: user.displayName
+          }));
           this.router.navigateByUrl('/home');
         } else {
           console.error('No se recibió el objeto usuario de Firebase.');
         }
-        // Redireccionar a la ruta deseada
       }).catch((error) => {
         console.error('Error durante el inicio de sesión:', error);
       });
@@ -107,23 +187,18 @@ export class FirebaseService {
   async signInWithFacebook() {
     const provider = new FacebookAuthProvider();
     provider.addScope('email');
-    provider.setCustomParameters({
-      'display': 'popup'
-    });
+    provider.setCustomParameters({ 'display': 'popup' });
 
     try {
       const result = await this.auth.signInWithPopup(provider);
       const user = result.user;
-
       if (result.credential) {
         const credential = result.credential as firebase.auth.OAuthCredential;
         const accessToken = credential.accessToken;
         console.log('Token de acceso', accessToken);
       }
-
       console.log('Inicio de sesión exitoso', user);
-      this.router.navigateByUrl('/home'); // Redirigir a la página de inicio
-
+      this.router.navigateByUrl('/home');
       return user;
     } catch (error) {
       console.error('Error al iniciar sesión con Facebook', error);
@@ -131,29 +206,20 @@ export class FirebaseService {
     }
   }
 
-
   async signUpWithFacebook() {
     const provider = new FacebookAuthProvider();
     provider.addScope('email');
-    provider.setCustomParameters({
-      'display': 'popup'
-    });
+    provider.setCustomParameters({ 'display': 'popup' });
 
     try {
       const result = await signInWithPopup(getAuth(), provider);
       const user = result.user;
-
       if (user) {
         const uid = user.uid;
-        const userInfo = {
-          uid,
-          email: user.email,
-          name: user.displayName || 'User'
-        };
-
+        const userInfo = { uid, email: user.email, name: user.displayName || 'User' };
         await this.setDocument(`users/${uid}`, userInfo);
         this.utilService.saveInLocalStorage('user', userInfo);
-        this.router.navigateByUrl('/home'); // Redirigir a la página de inicio
+        this.router.navigateByUrl('/home');
         return user;
       } else {
         throw new Error('No se pudo obtener la información del usuario.');
@@ -200,18 +266,12 @@ export class FirebaseService {
     try {
       const result = await signInWithPopup(getAuth(), provider);
       const user = result.user;
-
       if (user) {
         const uid = user.uid;
-        const userInfo = {
-          uid,
-          email: user.email,
-          name: user.displayName || 'User'
-        };
-
+        const userInfo = { uid, email: user.email, name: user.displayName || 'User' };
         await this.setDocument(`users/${uid}`, userInfo);
         this.utilService.saveInLocalStorage('user', userInfo);
-        this.router.navigateByUrl('/home'); // Redirigir a la página de inicio
+        this.router.navigateByUrl('/home');
         return user;
       } else {
         throw new Error('No se pudo obtener la información del usuario.');
@@ -249,5 +309,21 @@ export class FirebaseService {
       }
       return null;
     }
+  }
+
+  getSubCollection(path: string, subCollectionName: string) {
+    return this.firestore.doc(path).collection(subCollectionName).valueChanges({ idField: 'id' });
+  }
+
+  addToSubcollection(path: string, subcollectionName: string, object: any) {
+    return this.firestore.doc(path).collection(subcollectionName).add(object);
+  }
+
+  updateDocument(path: string, object: any) {
+    return this.firestore.doc(path).update(object);
+  }
+
+  deleteDocument(path: string) {
+    return this.firestore.doc(path).delete();
   }
 }

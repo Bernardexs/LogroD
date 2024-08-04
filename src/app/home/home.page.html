@@ -1,11 +1,48 @@
-<ion-header [translucent]="true">
+<ion-header>
   <ion-toolbar>
-    <ion-title>home</ion-title>
+    <ion-title>Mis Tareas</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="addOrUpdateTask()">Agregar Tarea</ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
- <ion-button (click)="signOut()" >
-  Click me
- </ion-button>
+<ion-content>
+  <button (click)="signOut()">Logout</button>
+  <ion-list>
+    <ion-item *ngFor="let task of tasks">
+      <ion-label>
+        <h2>{{ task.title }}</h2>
+        <p>{{ task.description }}</p>
+        <p>{{ task.startTime | date: 'short' }} - {{ task.endTime | date: 'short' }}</p>
+      </ion-label>
+      <ion-buttons slot="end">
+        <ion-button (click)="addOrUpdateTask(task)">Editar</ion-button>
+        <ion-button color="danger" (click)="deleteTask(task.id)">Eliminar</ion-button>
+        <ion-button color="success" (click)="markAsCompleted(task)">
+          {{ task.completed ? 'Marcar como No Completada' : 'Marcar como Completada' }}
+        </ion-button>
+      </ion-buttons>
+    </ion-item>
+  </ion-list>
+  
+  <div class="calendar-header">
+    <ion-button fill="clear" (click)="back()">
+      <ion-icon name="arrow-back-outline"></ion-icon>
+    </ion-button>
+    <div class="current-month">{{ currentMonth }}</div>
+    <ion-button fill="clear" (click)="next()">
+      <ion-icon name="arrow-forward-outline"></ion-icon>
+    </ion-button>
+  </div>
+  
+  <calendar
+    [eventSource]="allEvents"
+    [calendarMode]="calendar.mode"
+    [currentDate]="calendar.currentDate"
+    (onCurrentDateChanged)="onCurrentDateChanged($event)"
+    (onEventSelected)="onEventSelected($event)"
+    (onTitleChanged)="onViewTitleChanged($event)"
+    [step]="30">
+  </calendar>
 </ion-content>
