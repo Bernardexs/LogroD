@@ -9,6 +9,12 @@
 
 <ion-content>
   <button (click)="signOut()">Logout</button>
+  
+  <!-- Botones para Google Calendar API -->
+  <ion-button id="authorize_button" (click)="handleAuthClick()">Authorize</ion-button>
+  <ion-button id="signout_button" (click)="handleSignoutClick()">Sign Out</ion-button>
+  <pre id="content" style="white-space: pre-wrap;"></pre>
+  
   <ion-list>
     <ion-item *ngFor="let task of tasks">
       <ion-label>

@@ -18,12 +18,13 @@ export class AddUpdateTaskPage implements OnInit {
     private navParams: NavParams
   ) {
     this.task = this.navParams.get('task');
+    const now = new Date();
     this.form = this.fb.group({
       id: [this.task?.id],
       title: [this.task?.title || '', [Validators.required, Validators.minLength(4)]],
       description: [this.task?.description || '', [Validators.required, Validators.minLength(10)]],
-      startTime: [this.task?.startTime || '', Validators.required],
-      endTime: [this.task?.endTime || '', Validators.required]
+      startTime: [this.task?.startTime || now.toISOString(), Validators.required],
+      endTime: [this.task?.endTime || new Date(now.getTime() + 60 * 60 * 1000).toISOString(), Validators.required] // 1 hora después
     });
   }
 

@@ -16,7 +16,7 @@ import { NgCalendarModule  } from 'ionic2-calendar';
     IonicModule,
     HomePageRoutingModule,
     NgCircleProgressModule,
-    NgCalendarModule
+    NgCalendarModule,
   ],
  
   declarations: [HomePage]

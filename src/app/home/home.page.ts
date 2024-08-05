@@ -1,10 +1,9 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ModalController } from '@ionic/angular';
-import { FirebaseService } from '../services/firebase.service';
 import { Task } from '../models/task.model';
 import { AddUpdateTaskPage } from '../add-update-task/add-update-task.page';
 import { CalendarComponent } from 'ionic2-calendar';
-import { UtilsService } from '../services/utils.service';
+import { CalendarService } from '../services/calendar.service'; // Importa el servicio de calendario
 
 @Component({
   selector: 'app-home',
@@ -24,18 +23,16 @@ export class HomePage implements OnInit {
 
   constructor(
     private modalController: ModalController,
-    private firebase: FirebaseService,
-    private utilsSVC: UtilsService
+    private calendarService: CalendarService // Inyecta el servicio de calendario
   ) {}
 
   async ngOnInit() {
     await this.loadGoogleCalendarEvents();
-    this.getTasks();
   }
 
   async loadGoogleCalendarEvents() {
     try {
-      const events = await this.firebase.getCalendarEvents();
+      const events = await this.calendarService.listUpcomingEvents();
       this.myData = events.map((event: any) => ({
         title: event.summary,
         description: event.description,
@@ -43,6 +40,7 @@ export class HomePage implements OnInit {
         endTime: new Date(event.end.dateTime),
         allDay: false
       }));
+      this.loadEventsForCurrentDate(this.calendar.currentDate);
     } catch (error) {
       console.error('Error loading Google Calendar events', error);
     }
@@ -68,7 +66,8 @@ export class HomePage implements OnInit {
 
     modal.onDidDismiss().then(async (result) => {
       if (result.data) {
-        this.updateTaskList(result.data);
+        result.data.startTime = new Date(result.data.startTime);
+        result.data.endTime = new Date(result.data.endTime);
         await this.addEventToGoogleCalendar(result.data);
         await this.loadGoogleCalendarEvents(); // Reload events after adding a new one
       }
@@ -77,51 +76,36 @@ export class HomePage implements OnInit {
     return await modal.present();
   }
 
-  updateTaskList(updatedTask: Task) {
-    const index = this.tasks.findIndex((t) => t.id === updatedTask.id);
-    if (index > -1) {
-      this.tasks[index] = updatedTask;
-    } else {
-      if (updatedTask && updatedTask.id) {
-        this.tasks.push(updatedTask);
+  async addEventToGoogleCalendar(task: Task) {
+    const event = {
+      summary: task.title,
+      description: task.description,
+      start: {
+        dateTime: (task.startTime as Date).toISOString(),
+        timeZone: 'UTC'
+      },
+      end: {
+        dateTime: (task.endTime as Date).toISOString(),
+        timeZone: 'UTC'
       }
+    };
+
+    try {
+      await this.calendarService.insertEvent(event);
+    } catch (error) {
+      console.error('Error adding event to Google Calendar', error);
     }
   }
 
   async deleteTask(taskId: string) {
-    let user = this.utilsSVC.getFromLocalStorage('user');
-    let path = `users/${user.uid}/tasks/${taskId}`;
-    this.firebase.deleteDocument(path).then(() => {
-      this.tasks = this.tasks.filter(task => task.id !== taskId);
-    }).catch(error => {
-      console.error('Error deleting task', error);
-    });
-  }
-
-  async addEventToGoogleCalendar(task: Task) {
-    await this.firebase.insertEvent(task);
+    // Implementar la lógica para eliminar la tarea tanto de Firebase como de Google Calendar si es necesario
+    console.log('Eliminar tarea:', taskId);
   }
 
   async markAsCompleted(task: Task) {
-    task.completed = !task.completed; // Toggle the completed status
-    await this.firebase.updateDocument(`users/${this.utilsSVC.getFromLocalStorage('user').uid}/tasks/${task.id}`, task);
-    this.updateTaskList(task);
-  }
-
-  getTasks() {
-    let user = this.utilsSVC.getFromLocalStorage('user');
-    let path = `users/${user.uid}`;
-    this.firebase.getSubCollection(path, 'tasks').subscribe((docs: any[]) => {
-      this.tasks = docs.map(doc => ({
-        ...doc,
-        startTime: doc.startTime.toDate(),
-        endTime: doc.endTime.toDate()
-      })) as Task[];
-    });
-  }
-
-  getPercentage(task: Task): number {
-    return task.completed ? 100 : 0;
+    // Implementar la lógica para marcar la tarea como completada
+    task.completed = !task.completed; // Alternar el estado de completado
+    console.log('Marcar tarea como completada:', task);
   }
 
   back() {
@@ -135,7 +119,16 @@ export class HomePage implements OnInit {
   onEventSelected(event: any) {
     console.log('Event selected:', event);
   }
+
+  handleAuthClick() {
+    this.calendarService.handleAuthClick();
+  }
+
+  handleSignoutClick() {
+    this.calendarService.handleSignoutClick();
+  }
+
   signOut() {
-    this.firebase.signOut();
+    console.log('Cerrar sesión');
   }
 }
