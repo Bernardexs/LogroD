@@ -4,6 +4,7 @@ import { Task } from '../models/task.model';
 import { AddUpdateTaskPage } from '../add-update-task/add-update-task.page';
 import { CalendarComponent } from 'ionic2-calendar';
 import { CalendarService } from '../services/calendar.service'; // Importa el servicio de calendario
+import { FirebaseService } from '../services/firebase.service';
 
 @Component({
   selector: 'app-home',
@@ -23,7 +24,8 @@ export class HomePage implements OnInit {
 
   constructor(
     private modalController: ModalController,
-    private calendarService: CalendarService // Inyecta el servicio de calendario
+    private calendarService: CalendarService,
+    private firebase:FirebaseService // Inyecta el servicio de calendario
   ) {}
 
   async ngOnInit() {
@@ -129,6 +131,5 @@ export class HomePage implements OnInit {
   }
 
   signOut() {
-    console.log('Cerrar sesión');
-  }
+this.firebase.signOut()  }
 }

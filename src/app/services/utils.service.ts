@@ -1,6 +1,5 @@
 import { Injectable, inject } from '@angular/core';
 import { AlertController, AlertOptions, LoadingController, ModalController, ModalOptions, ToastController, ToastOptions } from '@ionic/angular';
-import { Task } from '../models/task.model';
 import { Router } from '@angular/router';
 
 @Injectable({
@@ -27,7 +26,25 @@ export class UtilsService {
   }
 
   saveInLocalStorage(key: string, value: any) {
-    return localStorage.setItem(key, JSON.stringify(value));
+    try {
+      const serializableValue = this.getSerializableObject(value);
+      localStorage.setItem(key, JSON.stringify(serializableValue));
+    } catch (e) {
+      console.error('Error saving to localStorage', e);
+    }
+  }
+
+  getSerializableObject(obj: any) {
+    const seen = new WeakSet();
+    return JSON.parse(JSON.stringify(obj, (key, value) => {
+      if (typeof value === 'object' && value !== null) {
+        if (seen.has(value)) {
+          return;
+        }
+        seen.add(value);
+      }
+      return value;
+    }));
   }
 
   getFromLocalStorage(key: string) {
@@ -55,10 +72,6 @@ export class UtilsService {
 
   dismissModal(data?: any) {
     this.modalController.dismiss(data);
-  }
-
-  getPercentage(task: Task) {
-    return task.completed ? 100 : 0;
   }
 
   async dismissLoading() {

@@ -4,7 +4,7 @@ import { User } from 'src/app/models/user.model';
 import { FirebaseService } from 'src/app/services/firebase.service';
 import { UtilsService } from 'src/app/services/utils.service';
 import { DocumentData } from '@angular/fire/firestore';
-
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-iniciar-sesion',
@@ -13,28 +13,31 @@ import { DocumentData } from '@angular/fire/firestore';
 })
 export class IniciarSesionPage implements OnInit {
 
-  form=new FormGroup({
-    email:new FormControl('',[Validators.required,Validators.email]),
-    password:new FormControl('',[Validators.required])
-  })
+  form = new FormGroup({
+    email: new FormControl('', [Validators.required, Validators.email]),
+    password: new FormControl('', [Validators.required])
+  });
 
+  router = inject(Router);
+  utilsSVC = inject(UtilsService);
+  firebase = inject(FirebaseService);
 
-  utilsSVC=inject(UtilsService)
-firebase=inject(FirebaseService)
-
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
   showPassword: boolean = false;
 
-  signInWithGoogle() {
-    this.firebase.signInWithGoogle();
+  async signInWithGoogle() {
+    try {
+      await this.firebase.signInWithGoogle();
+      this.router.navigate(['/home']);
+    } catch (error) {
+      console.error('Error during sign-in', error);
+    }
   }
 
   togglePasswordVisibility() {
     this.showPassword = !this.showPassword;
   }
-
 
   async submit(){
     if(this.form.valid){
@@ -61,11 +64,13 @@ firebase=inject(FirebaseService)
   }
 
 
+
   async getUserInfo(uid: string) {
     const loading = await this.utilsSVC.loading();
     await loading.present();
     
     let path = `users/${uid}`;
+    console.log('entro a getuserinfo')
     this.firebase.getDocument(path).then((data: DocumentData | undefined) => {
       if (data) {
         const user = data as User; // Cast to User if not undefined
@@ -91,8 +96,6 @@ firebase=inject(FirebaseService)
     });
   }
 
-
- 
 
   loginWithFacebook() {
     this.firebase.signInWithFacebook();

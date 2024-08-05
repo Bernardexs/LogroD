@@ -8,6 +8,7 @@ import { UtilsService } from './utils.service';
 import { Observable } from 'rxjs';
 import firebase from 'firebase/compat/app';
 import { Router } from '@angular/router';
+import { getFirestore, setDoc, doc, getDoc } from '@angular/fire/firestore';
 
 declare var google: any;
 declare var gapi: any;
@@ -31,78 +32,18 @@ export class FirebaseService {
   private gisInited = false;
 
   constructor() {
-    this.initClient();
     this.provider = new FacebookAuthProvider();
   }
 
-  initClient() {
-    google.accounts.id.initialize({
-      client_id: '548073834016-57t9d1t9mb6s4j877sbbuu07t37fo617.apps.googleusercontent.com',
-      callback: this.handleCredentialResponse.bind(this)
-    });
-    google.accounts.id.prompt();
+ 
 
-    gapi.load('client:auth2', () => {
-      gapi.client.init({
-        clientId: '548073834016-57t9d1t9mb6s4j877sbbuu07t37fo617.apps.googleusercontent.com',
-        discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"],
-        scope: 'https://www.googleapis.com/auth/calendar'
-      });
-      gapi.client.load('calendar', 'v3', () => {
-        this.gapiInited = true;
-        this.maybeEnableButtons();
-        console.log('loaded calendar');
-      });
-    });
+  
 
-    this.tokenClient = google.accounts.oauth2.initTokenClient({
-      client_id: '548073834016-57t9d1t9mb6s4j877sbbuu07t37fo617.apps.googleusercontent.com',
-      scope: 'https://www.googleapis.com/auth/calendar',
-      callback: '', // defined later
-    });
-    this.gisInited = true;
-    this.maybeEnableButtons();
-  }
+  
+  
 
-  private maybeEnableButtons() {
-    if (this.gapiInited && this.gisInited) {
-      // Aquí podrías habilitar los botones de autorización si es necesario
-    }
-  }
-
-  handleAuthClick() {
-    this.tokenClient.callback = async (resp: any) => {
-      if (resp.error !== undefined) {
-        throw (resp);
-      }
-      console.log("User signed in successfully");
-      await this.getCalendarEvents();
-    };
-
-    if (gapi.client.getToken() === null) {
-      this.tokenClient.requestAccessToken({ prompt: 'consent' });
-    } else {
-      this.tokenClient.requestAccessToken({ prompt: '' });
-    }
-  }
-
-  handleSignoutClick() {
-    const token = gapi.client.getToken();
-    if (token !== null) {
-      google.accounts.oauth2.revoke(token.access_token);
-      gapi.client.setToken('');
-      console.log("User signed out successfully");
-    }
-  }
-
-  handleCredentialResponse(response: any) {
-    const credential = GoogleAuthProvider.credential(response.credential);
-    this.auth.signInWithCredential(credential).then(() => {
-      console.log("User signed in successfully");
-    }).catch((error) => {
-      console.error("Error signing in", error);
-    });
-  }
+  
+  
 
   async getCalendarEvents() {
     try {
@@ -198,9 +139,10 @@ export class FirebaseService {
   }
 
   async getDocument(path: string) {
-    return (await this.firestore.doc(path).get());
+    console.log(path)
+    console.log('entro a getDocument')
+    return (await getDoc(doc(getFirestore(), path))).data();
   }
-
   async signOut() {
     const auth = getAuth();
     await auth.signOut();
