@@ -130,6 +130,6 @@ export class HomePage implements OnInit {
     this.calendarService.handleSignoutClick();
   }
 
-  signOut() {
+signOut() {
 this.firebase.signOut()  }
 }

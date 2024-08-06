@@ -1,48 +1,23 @@
-ion-card {
-    border-radius: 15px;
-    padding: 10px;
-    min-height: 200px;
-  }
-  
-  ion-card:hover {
-    cursor: pointer;
-    background: var(--ion-color-light);
-  }
-  
-  
-  .title {
-    font-size: 18px;
-    font-weight: bold;
-    padding-top: 10px;
-    line-height:20px;
-  }
-  .task-btn{
-    width:120px;
-  }
+.logout-button {
+  display: flex;
+  justify-content: flex-end;
+  padding: 10px;
+}
 
-  .empty {
-    opacity: 30%;
-    text-align: center;
-    ion-icon {
-      font-size: 130px;
-    }
-  }
-  .calendar-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px;
-  
-    ion-button {
-      --padding-start: 0;
-      --padding-end: 0;
-    }
-  
-    .current-month {
-      font-size: 1.2em;
-      font-weight: bold;
-    }
-  }
-  
-  
-  
+.calendar-buttons {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 20px 0;
+}
+
+.current-month {
+  font-weight: bold;
+  font-size: 1.2em;
+}

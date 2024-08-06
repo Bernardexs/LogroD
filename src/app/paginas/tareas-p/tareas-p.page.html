@@ -1,0 +1,44 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Tareas pendientes</ion-title>
+    <ion-buttons slot="end">
+      <ion-button>
+        <ion-icon slot="icon-only" name="funnel-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-searchbar placeholder="Buscar tarea"></ion-searchbar>
+
+  <ion-list>
+    <ion-item *ngFor="let tarea of tareas">
+      <ion-checkbox slot="start"></ion-checkbox>
+      <ion-label>
+        <h2>{{tarea.title}}</h2>
+        <p>{{tarea.date}}</p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button>
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>
+
+<ion-footer>
+  <ion-tab-bar slot="bottom">
+    <ion-tab-button tab="tareas">
+      <ion-icon name="checkmark-circle-outline"></ion-icon>
+    </ion-tab-button>
+    <ion-tab-button tab="calendario">
+      <ion-icon name="calendar-outline"></ion-icon>
+    </ion-tab-button>
+    <ion-tab-button tab="menu">
+      <ion-icon name="menu-outline"></ion-icon>
+    </ion-tab-button>
+  </ion-tab-bar>
+</ion-footer>

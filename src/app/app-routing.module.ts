@@ -30,6 +30,10 @@ const routes: Routes = [
     path: 'add-update-task',
     loadChildren: () => import('./add-update-task/add-update-task.module').then( m => m.AddUpdateTaskPageModule)
   },
+  {
+    path: 'tareas-p',
+    loadChildren: () => import('./paginas/tareas-p/tareas-p.module').then( m => m.TareasPPageModule)
+  },
 
 
 

@@ -8,13 +8,17 @@
 </ion-header>
 
 <ion-content>
-  <button (click)="signOut()">Logout</button>
-  
+  <div class="logout-button">
+    <ion-button (click)="signOut()">Logout</ion-button>
+  </div>
+
   <!-- Botones para Google Calendar API -->
-  <ion-button id="authorize_button" (click)="handleAuthClick()">Authorize</ion-button>
-  <ion-button id="signout_button" (click)="handleSignoutClick()">Sign Out</ion-button>
+  <div class="calendar-buttons">
+    <ion-button id="authorize_button" (click)="handleAuthClick()">Authorize</ion-button>
+    <ion-button id="signout_button" (click)="handleSignoutClick()">Sign Out</ion-button>
+  </div>
   <pre id="content" style="white-space: pre-wrap;"></pre>
-  
+
   <ion-list>
     <ion-item *ngFor="let task of tasks">
       <ion-label>
@@ -31,7 +35,7 @@
       </ion-buttons>
     </ion-item>
   </ion-list>
-  
+
   <div class="calendar-header">
     <ion-button fill="clear" (click)="back()">
       <ion-icon name="arrow-back-outline"></ion-icon>
@@ -41,7 +45,7 @@
       <ion-icon name="arrow-forward-outline"></ion-icon>
     </ion-button>
   </div>
-  
+
   <calendar
     [eventSource]="allEvents"
     [calendarMode]="calendar.mode"
@@ -51,4 +55,6 @@
     (onTitleChanged)="onViewTitleChanged($event)"
     [step]="30">
   </calendar>
+
+  
 </ion-content>
