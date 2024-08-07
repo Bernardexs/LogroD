@@ -1,3 +1,9 @@
+ion-footer.fixed-footer {
+  position: sticky;
+  bottom: 0;
+  width: 100%;
+}
+
 ion-header {
   --background: #fff;
   --color: #000;
@@ -110,15 +116,15 @@ ion-tab-button:hover {
 }
 
 ion-tab-button[tab="tareas"] {
-  --color: #ffffff; /* Color pastel para el icono de tareas */
+  --color: #adb5bd; /* Color pastel para el icono de tareas */
 }
 
 ion-tab-button[tab="calendario"] {
-  --color: #ffffff; /* Color pastel para el icono de calendario */
+  --color: #adb5bd; /* Color pastel para el icono de calendario */
 }
 
 ion-tab-button[tab="menu"] {
-  --color: #ffffff; /* Color pastel para el icono de menú */
+  --color: #adb5bd; /* Color pastel para el icono de menú */
 }
 
 ion-tab-button.selected {
@@ -155,7 +161,10 @@ ion-popover {
   overflow: hidden;
 }
 
-/* Estilos específicos para pantallas grandes */
+ion-popover ion-icon {
+  --color: #000; /* Asegura que los iconos dentro del popover sean visibles */
+}
+
 @media screen and (min-width: 1024px) {
   ion-toolbar {
     padding: 0 20px; /* Más espacio en los lados */
@@ -217,17 +226,4 @@ ion-popover {
     text-overflow: ellipsis;
     overflow: hidden;
   }
-
-
-  ion-tab-button[tab="tareas"] {
-    --color: #adb5bd; /* Color pastel para el icono de calendario */  }
-  
-  ion-tab-button[tab="calendario"] {
-    --color: #adb5bd; /* Color pastel para el icono de calendario */
-  }
-  
-  ion-tab-button[tab="menu"] {
-    --color: #adb5bd; /* Color pastel para el icono de menú */
-  }
-
 }
