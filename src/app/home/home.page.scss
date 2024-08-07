@@ -4,6 +4,21 @@ ion-footer.fixed-footer {
   width: 100%;
 }
 
+ion-header {
+  --background: #fff;
+  --color: #000;
+}
+
+.titulo {
+  font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
+  font-size: 25px;
+}
+
+ion-toolbar {
+  --background: #fff;
+  --color: #000;
+}
+
 .logout-button {
   display: flex;
   justify-content: flex-end;
@@ -117,9 +132,17 @@ ion-popover {
   ion-tab-bar {
     font-size: 20px; /* Tamaño de fuente más grande para las pestañas */
   }
-  
+
   ion-item {
     width: 80%; /* Más ancho para elementos de lista */
     padding: 10px; /* Más espacio interno */
+  }
+
+  ion-toolbar {
+    padding: 0 20px; /* Más espacio en los lados */
+  }
+
+  .titulo {
+    font-size: 30px; /* Tamaño de fuente más grande para títulos */
   }
 }

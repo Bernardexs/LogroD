@@ -5,6 +5,15 @@ import { AddUpdateTaskPage } from '../add-update-task/add-update-task.page';
 import { CalendarComponent } from 'ionic2-calendar';
 import { CalendarService } from '../services/calendar.service'; // Importa el servicio de calendario
 import { FirebaseService } from '../services/firebase.service';
+import { AlertController } from '@ionic/angular';
+
+interface AlertDismissEventDetail {
+  role?: string;
+}
+
+interface AlertDismissEvent extends CustomEvent {
+  detail: AlertDismissEventDetail;
+}
 
 @Component({
   selector: 'app-home',
@@ -25,11 +34,50 @@ export class HomePage implements OnInit {
   constructor(
     private modalController: ModalController,
     private calendarService: CalendarService,
-    private firebase:FirebaseService // Inyecta el servicio de calendario
+    private firebase:FirebaseService, // Inyecta el servicio de calendario
+    private alertController: AlertController
   ) {}
 
   async ngOnInit() {
     await this.loadGoogleCalendarEvents();
+  }
+
+
+  public alertButtons = [
+    {
+      text: 'Cancel',
+      role: 'cancel',
+      handler: () => {
+        console.log('Alert canceled');
+      },
+    },
+    {
+      text: 'Si',
+      role: 'confirm',
+      handler: () => {
+        console.log('Alert confirmed');
+      },
+    },
+  ];
+
+  // Definir el tipo de ev explícitamente
+  setResult(ev: AlertDismissEvent) {
+    const role = ev.detail.role ?? 'unknown';
+    console.log(`Dismissed with role: ${role}`);
+  }
+
+  async presentAlert() {
+    const alert = await this.alertController.create({
+      header: '¿Estás seguro?',
+      message: 'Esta acción no se puede deshacer.', // Puedes agregar un mensaje adicional
+      buttons: this.alertButtons,
+      backdropDismiss: false,
+      mode: 'ios' // Forzar el modo iOS
+    });
+
+    await alert.present();
+    const { role } = await alert.onDidDismiss();
+    this.setResult(new CustomEvent('dismiss', { detail: { role: role ?? 'unknown' } }));
   }
 
   async loadGoogleCalendarEvents() {

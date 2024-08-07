@@ -33,7 +33,6 @@
     <ion-tab-button tab="tareas">
       <ion-icon name="checkmark-circle-outline"></ion-icon>
     </ion-tab-button>
-
     <ion-tab-button routerLink="/home" tab="calendario">
       <ion-icon name="calendar-outline"></ion-icon>
     </ion-tab-button>
@@ -52,8 +51,7 @@
                 <ion-icon name="bar-chart-outline" slot="start"></ion-icon>
                 <ion-label>Productividad</ion-label>
               </ion-item>
-
-              <ion-item button>
+              <ion-item button (click)="presentAlert()">
                 <ion-icon name="log-out-outline" slot="start"></ion-icon>
                 <ion-label>Cerrar Sesión</ion-label>
               </ion-item>
@@ -71,6 +69,7 @@
               </ion-popover>
             </ion-list>
           </ion-content>
+                   
         </ng-template>
       </ion-popover>
     </ion-tab-button>
