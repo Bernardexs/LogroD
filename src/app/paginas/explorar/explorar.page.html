@@ -1,0 +1,119 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title class="titulo">Explorar</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list>
+    <ion-item button class="custom-button">
+      <ion-icon
+        name="person-circle-outline"
+        slot="start"
+        class="custom-icon"
+      ></ion-icon>
+      <ion-label>Perfil</ion-label>
+    </ion-item>
+    <ion-item button class="custom-button">
+      <ion-icon
+        name="color-palette-outline"
+        slot="start"
+        class="custom-icon"
+      ></ion-icon>
+      <ion-label>Tema</ion-label>
+      <ion-toggle slot="end"></ion-toggle>
+    </ion-item>
+    <ion-item button class="custom-button">
+      <ion-icon
+        name="bar-chart-outline"
+        slot="start"
+        class="custom-icon"
+      ></ion-icon>
+      <ion-label>Productividad</ion-label>
+    </ion-item>
+    <ion-item button class="custom-button">
+      <ion-icon
+        name="notifications-outline"
+        slot="start"
+        class="custom-icon"
+      ></ion-icon>
+      <ion-label>Notificaciones</ion-label>
+    </ion-item>
+    <ion-item button class="custom-button">
+      <ion-icon
+        name="add-circle-outline"
+        slot="start"
+        class="custom-icon"
+      ></ion-icon>
+      <ion-label>Añadir rápido</ion-label>
+    </ion-item>
+    <ion-item button class="custom-button">
+      <ion-icon name="time-outline" slot="start" class="custom-icon"></ion-icon>
+      <ion-label>Recordatorios</ion-label>
+    </ion-item>
+    <ion-item button class="custom-button">
+      <ion-icon
+        name="log-out-outline"
+        slot="start"
+        class="custom-icon"
+      ></ion-icon>
+      <ion-label>Cerrar Sesión</ion-label>
+    </ion-item>
+  </ion-list>
+
+  <ion-footer class="fixed-footer">
+    <ion-tab-bar slot="bottom">
+      <ion-tab-button routerLink="/tareas-p" tab="tareas">
+        <ion-icon name="checkmark-circle-outline"></ion-icon>
+      </ion-tab-button>
+
+      <ion-tab-button routerLink="home" tab="calendario">
+        <ion-icon name="calendar-outline"></ion-icon>
+      </ion-tab-button>
+
+      <ion-tab-button routerLink="/explorar" tab="menu">
+        <ion-icon id="popover-button" name="menu-outline"></ion-icon>
+        <ion-popover trigger="popover-button" [dismissOnSelect]="true">
+          <ng-template>
+            <ion-content>
+              <ion-list>
+                <ion-item button>
+                  <ion-icon name="notifications-outline" slot="start"></ion-icon>
+                  <ion-label>Notificaciones</ion-label>
+                </ion-item>
+                <ion-item button>
+                  <ion-icon name="bar-chart-outline" slot="start"></ion-icon>
+                  <ion-label>Productividad</ion-label>
+                </ion-item>
+                <ion-item button>
+                  <ion-icon name="add-circle-outline" slot="start"></ion-icon>
+                  <ion-label>Añadir rápido</ion-label>
+                </ion-item>
+                <ion-item button>
+                  <ion-icon name="time-outline" slot="start"></ion-icon>
+                  <ion-label>Recordatorios</ion-label>
+                </ion-item>
+                <ion-item button>
+                  <ion-icon name="log-out-outline" slot="start"></ion-icon>
+                  <ion-label>Cerrar Sesión</ion-label>
+                </ion-item>
+                <ion-popover trigger="nested-trigger" [dismissOnSelect]="true" side="end">
+                  <ng-template>
+                    <ion-content>
+                      <ion-list>
+                        <ion-item button>
+                          <ion-icon name="options-outline" slot="start"></ion-icon>
+                          <ion-label>Nested option</ion-label>
+                        </ion-item>
+                      </ion-list>
+                    </ion-content>
+                  </ng-template>
+                </ion-popover>
+              </ion-list>
+            </ion-content>
+          </ng-template>
+        </ion-popover>
+      </ion-tab-button>
+    </ion-tab-bar>
+  </ion-footer>
+</ion-content>

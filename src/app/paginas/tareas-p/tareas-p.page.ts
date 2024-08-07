@@ -6,19 +6,23 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./tareas-p.page.scss'],
 })
 export class TareasPPage implements OnInit {
+  constructor() {}
 
-  constructor() { }
-
-  ngOnInit() {
-  }
-
-
+  ngOnInit() {}
 
   tareas = [
     { title: 'Ir al gym', date: 'junio 27' },
     { title: 'Ir al gym', date: 'junio 27' },
     { title: 'Ir al gym', date: 'junio 27' },
-    { title: 'Ir al gym', date: 'junio 27' }
+    { title: 'Ir al gym', date: 'junio 27' },
+    { title: 'Ir al gym', date: 'junio 27' },
+    { title: 'Ir al gym', date: 'junio 27' },
+    { title: 'Ir al gym', date: 'junio 27' },
+    { title: 'Ir al gym', date: 'junio 27' },
+    { title: 'Ir al gym', date: 'junio 27' },
+    { title: 'Ir al gym', date: 'junio 27' },
+    { title: 'Ir al gym', date: 'junio 27' },
+    { title: 'Ir al gym', date: 'junio 27' },
   ];
-
+  
 }

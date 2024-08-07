@@ -1,47 +1,175 @@
 ion-header {
-    --background: #fff;
-    --color: #000;
+  --background: #fff;
+  --color: #000;
+}
+
+.titulo {
+  font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
+  font-size: 25px;
+}
+
+ion-toolbar {
+  --background: #fff;
+  --color: #000;
+}
+
+.BuscarT {
+  margin: 5% 5% 0 5%;
+  --background: #f3f5f7;
+  --border-radius: 20px;
+  width: 90%;
+}
+
+/* Estilo base para el ion-item */
+ion-item {
+  --background: #fefdff;
+  --border-radius: 10px;
+  width: 90%;
+  display: flex;
+  justify-content: center;
+  padding: 5px; /* Espaciado mejorado */
+  position: relative; /* Necesario para el pseudo-elemento */
+  transition: background-color 0.3s ease; /* Transición suave para el fondo */
+}
+
+/* Estilo para cuando el ion-item está seleccionado */
+ion-item::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: #c7d2fe;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+ion-item[selected]::after {
+  opacity: 1;
+  transition: opacity 0.3s ease;
+  animation: fadeOut 0.3s forwards 0.3s;
+}
+
+@keyframes fadeOut {
+  to {
+    opacity: 0;
   }
-  
+}
+
+ion-item:hover {
+  --background: #dce1f3; /* Color celeste claro cuando se pasa el mouse */
+}
+
+ion-list {
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Centrar los elementos de la lista */
+}
+
+ion-item:last-child {
+  border-bottom: none;
+}
+
+ion-label h2 {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+ion-label p {
+  font-size: 12px;
+  color: #888;
+}
+
+ion-fab {
+  margin: 16px; /* Agrega un margen para separar el botón de las esquinas */
+}
+
+ion-fab-button {
+  --background: #2b31d2;
+  --color: #fff;
+}
+
+ion-tab-bar {
+  --background: #fff;
+  --color: #000000;
+  font-size: 35px;
+}
+
+ion-tab-button {
+  --color-selected: #344ce5;
+}
+
+/* Ajustes del popover */
+ion-popover {
+  --width: 300px; /* Ajusta este valor según tus necesidades */
+}
+
+
+
+.custom-popover ion-item {
+  --min-height: 44px; /* Ajusta este valor según tus necesidades */
+  white-space: nowrap; /* Evita que las palabras se vayan hacia abajo */
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+/* Estilos específicos para pantallas grandes */
+@media screen and (min-width: 1024px) {
   ion-toolbar {
-    --background: #fff;
-    --color: #000;
+    padding: 0 20px; /* Más espacio en los lados */
   }
-  
-  ion-searchbar {
-    margin: 10px;
-    --background: #f7f6f9;
-    --border-radius: 10px;
+
+  .titulo {
+    font-size: 30px; /* Tamaño de fuente más grande para títulos */
   }
-  
+
+  .BuscarT {
+    margin: 2% auto; /* Centrar la barra de búsqueda */
+    width: 50%; /* Hacerla más ancha */
+  }
+
   ion-item {
-    margin: 10px 0;
-    --background: #fff;
-    --border-radius: 10px;
-    --box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    width: 80%; /* Más ancho para elementos de lista */
+    padding: 10px; /* Más espacio interno */
   }
-  
+
   ion-label h2 {
-    font-size: 16px;
-    font-weight: bold;
+    font-size: 18px; /* Tamaño de fuente más grande para títulos de tareas */
   }
-  
+
   ion-label p {
-    font-size: 12px;
-    color: #888;
+    font-size: 14px; /* Tamaño de fuente más grande para detalles de tareas */
   }
-  
+
+  .add {
+    margin-right: 30px; /* Aumenta el margen para pantallas grandes */
+  }
+
   ion-fab-button {
-    --background: #4caf50;
-    --color: #fff;
+    --background: linear-gradient(
+      to right,
+      #2b31d2,
+      #344ce5
+    ); /* Gradiente para el botón flotante */
   }
-  
+
   ion-tab-bar {
-    --background: #fff;
-    --color: #000;
+    font-size: 20px; /* Tamaño de fuente más grande para las pestañas */
+  }
+
+  ion-popover .popover-content {
+    --width: 200px; /* Ajusta este valor según tus necesidades */
   }
   
-  ion-tab-button {
-    --color-selected: #4caf50;
+  .custom-popover ion-item {
+    --min-height: 44px; /* Ajusta este valor según tus necesidades */
+    white-space: nowrap; /* Evita que las palabras se vayan hacia abajo */
+    text-overflow: ellipsis;
+    overflow: hidden;
   }
-  
+
+}
+
+

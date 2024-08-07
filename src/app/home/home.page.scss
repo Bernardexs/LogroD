@@ -1,3 +1,9 @@
+ion-footer.fixed-footer {
+  position: sticky;
+  bottom: 0;
+  width: 100%;
+}
+
 .logout-button {
   display: flex;
   justify-content: flex-end;
@@ -20,4 +26,100 @@
 .current-month {
   font-weight: bold;
   font-size: 1.2em;
+}
+
+ion-tab-bar {
+  --background: #fff;
+  --color: #000000;
+  font-size: 35px;
+}
+
+ion-tab-button {
+  --color-selected: #344ce5;
+}
+
+ion-item {
+  --background: #fefdff;
+  --border-radius: 10px;
+  width: 90%;
+  display: flex;
+  justify-content: center;
+  padding: 5px; /* Espaciado mejorado */
+  position: relative; /* Necesario para el pseudo-elemento */
+  transition: background-color 0.3s ease; /* Transición suave para el fondo */
+}
+
+/* Estilo para cuando el ion-item está seleccionado */
+ion-item::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: #c7d2fe;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+ion-item[selected]::after {
+  opacity: 1;
+  transition: opacity 0.3s ease;
+  animation: fadeOut 0.3s forwards 0.3s;
+}
+
+@keyframes fadeOut {
+  to {
+    opacity: 0;
+  }
+}
+
+ion-item:hover {
+  --background: #dce1f3; /* Color celeste claro cuando se pasa el mouse */
+}
+
+ion-list {
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Centrar los elementos de la lista */
+}
+
+ion-item:last-child {
+  border-bottom: none;
+  margin-bottom: 50px;
+}
+
+/* Ajustes del popover */
+ion-popover {
+  --width: 300px; /* Ajusta este valor según tus necesidades */
+}
+
+.custom-popover ion-item {
+  --min-height: 44px; /* Ajusta este valor según tus necesidades */
+  white-space: nowrap; /* Evita que las palabras se vayan hacia abajo */
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+@media screen and (min-width: 1024px) {
+  ion-popover .popover-content {
+    --width: 200px; /* Ajusta este valor según tus necesidades */
+  }
+
+  .custom-popover ion-item {
+    --min-height: 44px; /* Ajusta este valor según tus necesidades */
+    white-space: nowrap; /* Evita que las palabras se vayan hacia abajo */
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+
+  ion-tab-bar {
+    font-size: 20px; /* Tamaño de fuente más grande para las pestañas */
+  }
+  
+  ion-item {
+    width: 80%; /* Más ancho para elementos de lista */
+    padding: 10px; /* Más espacio interno */
+  }
 }

@@ -26,14 +26,19 @@ const routes: Routes = [
   {
     path: 'home',
     loadChildren: () => import('./home/home.module').then( m => m.HomePageModule),canActivate:[HomeGuard]
-  },  {
+  },
+  {
     path: 'add-update-task',
     loadChildren: () => import('./add-update-task/add-update-task.module').then( m => m.AddUpdateTaskPageModule)
   },
   {
     path: 'tareas-p',
     loadChildren: () => import('./paginas/tareas-p/tareas-p.module').then( m => m.TareasPPageModule)
+  },  {
+    path: 'explorar',
+    loadChildren: () => import('./paginas/explorar/explorar.module').then( m => m.ExplorarPageModule)
   },
+
 
 
 

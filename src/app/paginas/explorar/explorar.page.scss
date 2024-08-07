@@ -1,0 +1,51 @@
+ion-content {
+    --padding-bottom: 56px; /* Ajusta según la altura de la barra de pestañas */
+  }
+
+  .titulo {
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-size: 25px;
+  } 
+  
+  .fixed-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 56px; /* Ajusta según la altura de la barra de pestañas */
+    background-color: #fff; /* Fondo de la barra de pestañas */
+    z-index: 10; /* Asegura que esté por encima de otros elementos */
+  }
+  
+  ion-tab-bar {
+    --background: #fff;
+    --color: #000000;
+    font-size: 35px;
+  }
+  
+  ion-tab-button {
+    --color-selected: #344ce5;
+  }
+  
+  .custom-button {
+    --background: #ffffff;
+    --background-activated: #e0e7ff; /* Color de fondo cuando se activa el botón */
+    --background-focused: #c7d2fe; /* Color de fondo cuando se enfoca el botón */
+    --background-hover: #c7d2fe; /* Color de fondo cuando se pasa el cursor por encima */
+    --color: #344ce5; /* Color del texto y de los íconos */
+    --padding-start: 16px;
+    --padding-end: 16px;
+    border-radius: 8px; /* Bordes redondeados */
+    margin: 8px 16px; /* Margen alrededor de los botones */
+    transition: background-color 0.3s ease; /* Transición suave para el fondo */
+  }
+  
+  .custom-button ion-icon {
+    font-size: 1.5em;
+    color: #000000;
+  }
+  
+  .custom-button ion-label {
+    font-size: 1.2em;
+    color: #000000;
+  }
