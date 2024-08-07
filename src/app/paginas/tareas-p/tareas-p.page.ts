@@ -1,14 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AlertController } from '@ionic/angular';
 
-interface AlertDismissEventDetail {
-  role?: string;
-}
-
-interface AlertDismissEvent extends CustomEvent {
-  detail: AlertDismissEventDetail;
-}
-
 @Component({
   selector: 'app-tareas-p',
   templateUrl: './tareas-p.page.html',
@@ -28,7 +20,7 @@ export class TareasPPage implements OnInit {
       },
     },
     {
-      text: 'Si',
+      text: 'OK',
       role: 'confirm',
       handler: () => {
         console.log('Alert confirmed');
@@ -36,7 +28,7 @@ export class TareasPPage implements OnInit {
     },
   ];
 
-  setResult(ev: AlertDismissEvent) {
+  setResult(ev: CustomEvent<{ role: string }>) {
     const role = ev.detail.role ?? 'unknown';
     console.log(`Dismissed with role: ${role}`);
   }
@@ -44,15 +36,21 @@ export class TareasPPage implements OnInit {
   async presentAlert() {
     const alert = await this.alertController.create({
       header: '¿Estás seguro?',
-      message: 'Esta acción no se puede deshacer.', // Puedes agregar un mensaje adicional
+      message: 'Esta acción no se puede deshacer.',
       buttons: this.alertButtons,
       backdropDismiss: false,
-      mode: 'ios' // Forzar el modo iOS
+      mode: 'ios', // Forzar el modo iOS
     });
 
     await alert.present();
     const { role } = await alert.onDidDismiss();
     this.setResult(new CustomEvent('dismiss', { detail: { role: role ?? 'unknown' } }));
+  }
+
+  selectTab(event: Event) {
+    const tabButtons = document.querySelectorAll('ion-tab-button');
+    tabButtons.forEach(button => button.classList.remove('selected', 'animated'));
+    (event.currentTarget as HTMLElement).classList.add('selected', 'animated');
   }
 
   tareas = [

@@ -92,21 +92,61 @@ ion-fab-button {
 }
 
 ion-tab-bar {
-  --background: #fff;
-  --color: #000000;
+  --background: #000; /* Color oscuro para el fondo de la barra de pestañas */
+  --color: #ffffff; /* Color de los iconos por defecto */
   font-size: 35px;
 }
 
 ion-tab-button {
-  --color-selected: #344ce5;
+  --color: #adb5bd; /* Color de los iconos cuando no están seleccionados */
+  --color-selected: #ffffff; /* Color de los iconos cuando están seleccionados */
+  --background: transparent; /* Fondo transparente para los botones */
+  transition: background-color 0.3s ease, color 0.3s ease; /* Animaciones suaves */
+}
+
+ion-tab-button:hover {
+  --color: #ffffff; /* Color blanco cuando se pasa el mouse por encima */
+  --background: rgba(255, 255, 255, 0.1); /* Fondo más claro cuando se pasa el mouse por encima */
+}
+
+ion-tab-button[tab="tareas"] {
+  --color: #ffffff; /* Color pastel para el icono de tareas */
+}
+
+ion-tab-button[tab="calendario"] {
+  --color: #ffffff; /* Color pastel para el icono de calendario */
+}
+
+ion-tab-button[tab="menu"] {
+  --color: #ffffff; /* Color pastel para el icono de menú */
+}
+
+ion-tab-button.selected {
+  --background: rgba(255, 255, 255, 0.2); /* Fondo más claro cuando el botón está seleccionado */
+  --color: #ffffff; /* Color blanco cuando el botón está seleccionado */
+}
+
+ion-tab-button.animated {
+  animation: pulse 1s infinite; /* Animación de pulsación */
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+    --color: #ffffff; /* Color blanco durante la pulsación */
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 /* Ajustes del popover */
 ion-popover {
   --width: 300px; /* Ajusta este valor según tus necesidades */
 }
-
-
 
 .custom-popover ion-item {
   --min-height: 44px; /* Ajusta este valor según tus necesidades */
@@ -159,10 +199,18 @@ ion-popover {
     font-size: 20px; /* Tamaño de fuente más grande para las pestañas */
   }
 
+  ion-tab-button {
+    --icon-size: 24px; /* Ajuste del tamaño de los íconos */
+  }
+
+  ion-icon {
+    font-size: 32px; /* Tamaño más grande para los íconos */
+  }
+
   ion-popover .popover-content {
     --width: 200px; /* Ajusta este valor según tus necesidades */
   }
-  
+
   .custom-popover ion-item {
     --min-height: 44px; /* Ajusta este valor según tus necesidades */
     white-space: nowrap; /* Evita que las palabras se vayan hacia abajo */
@@ -170,6 +218,16 @@ ion-popover {
     overflow: hidden;
   }
 
+
+  ion-tab-button[tab="tareas"] {
+    --color: #adb5bd; /* Color pastel para el icono de calendario */  }
+  
+  ion-tab-button[tab="calendario"] {
+    --color: #adb5bd; /* Color pastel para el icono de calendario */
+  }
+  
+  ion-tab-button[tab="menu"] {
+    --color: #adb5bd; /* Color pastel para el icono de menú */
+  }
+
 }
-
-

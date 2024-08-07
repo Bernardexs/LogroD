@@ -13,7 +13,6 @@
   </ion-toolbar>
 </ion-header>
 
-
 <ion-content>
   <div class="logout-button">
     <ion-button (click)="signOut()">Logout</ion-button>
@@ -61,8 +60,6 @@
     (onTitleChanged)="onViewTitleChanged($event)"
     [step]="30">
   </calendar>
-
-
 </ion-content>
 
 <ion-footer class="fixed-footer">
@@ -75,7 +72,7 @@
       <ion-icon name="calendar-outline"></ion-icon>
     </ion-tab-button>
 
-    <ion-tab-button  tab="menu">
+    <ion-tab-button tab="menu">
       <ion-icon id="popover-button" name="menu-outline"></ion-icon>
       <ion-popover trigger="popover-button" [dismissOnSelect]="true">
         <ng-template>
@@ -107,7 +104,6 @@
               </ion-popover>
             </ion-list>
           </ion-content>
-          
         </ng-template>
       </ion-popover>
     </ion-tab-button>

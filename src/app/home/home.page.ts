@@ -80,6 +80,12 @@ export class HomePage implements OnInit {
     this.setResult(new CustomEvent('dismiss', { detail: { role: role ?? 'unknown' } }));
   }
 
+  selectTab(event: Event) {
+    const tabButtons = document.querySelectorAll('ion-tab-button');
+    tabButtons.forEach(button => button.classList.remove('selected', 'animated'));
+    (event.currentTarget as HTMLElement).classList.add('selected', 'animated');
+  }
+  
   async loadGoogleCalendarEvents() {
     try {
       const events = await this.calendarService.listUpcomingEvents();
