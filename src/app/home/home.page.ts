@@ -6,6 +6,7 @@ import { CalendarComponent } from 'ionic2-calendar';
 import { CalendarService } from '../services/calendar.service'; // Importa el servicio de calendario
 import { FirebaseService } from '../services/firebase.service';
 import { AlertController } from '@ionic/angular';
+import { UtilsService } from '../services/utils.service';
 
 interface AlertDismissEventDetail {
   role?: string;
@@ -35,7 +36,8 @@ export class HomePage implements OnInit {
     private modalController: ModalController,
     private calendarService: CalendarService,
     private firebase:FirebaseService, // Inyecta el servicio de calendario
-    private alertController: AlertController
+    private alertController: AlertController,
+    private utilSVC:UtilsService
   ) {}
 
   async ngOnInit() {
@@ -77,6 +79,14 @@ export class HomePage implements OnInit {
 
     await alert.present();
     const { role } = await alert.onDidDismiss();
+    if(role=='confirm'){
+      const loading=await this.utilSVC.loading()
+      await loading.present()
+        this.firebase.signOut()
+        loading.dismiss()
+    }
+     
+    console.log(role)
     this.setResult(new CustomEvent('dismiss', { detail: { role: role ?? 'unknown' } }));
   }
 
@@ -184,6 +194,4 @@ export class HomePage implements OnInit {
     this.calendarService.handleSignoutClick();
   }
 
-signOut() {
-this.firebase.signOut()  }
 }

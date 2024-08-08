@@ -14,9 +14,7 @@
 </ion-header>
 
 <ion-content>
-  <div class="logout-button">
-    <ion-button (click)="signOut()">Logout</ion-button>
-  </div>
+ 
 
   <div class="calendar-buttons">
     <ion-button id="authorize_button" (click)="handleAuthClick()">Authorize</ion-button>
@@ -72,8 +70,8 @@
       <ion-icon name="calendar-outline"></ion-icon>
     </ion-tab-button>
 
-    <ion-tab-button tab="menu">
-      <ion-icon id="popover-button" name="menu-outline"></ion-icon>
+    <ion-tab-button tab="menu" id="popover-button">
+      <ion-icon  name="menu-outline"></ion-icon>
       <ion-popover trigger="popover-button" [dismissOnSelect]="true">
         <ng-template>
           <ion-content>

@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AlertController } from '@ionic/angular';
+import { FirebaseService } from 'src/app/services/firebase.service';
+import { UtilsService } from 'src/app/services/utils.service';
 
 @Component({
   selector: 'app-tareas-p',
@@ -7,7 +9,10 @@ import { AlertController } from '@ionic/angular';
   styleUrls: ['./tareas-p.page.scss'],
 })
 export class TareasPPage implements OnInit {
-  constructor(private alertController: AlertController) {}
+  constructor(private alertController: AlertController,
+    private utilSVC:UtilsService, 
+   private firebase:FirebaseService
+  ) {}
 
   ngOnInit() {}
 
@@ -20,7 +25,7 @@ export class TareasPPage implements OnInit {
       },
     },
     {
-      text: 'OK',
+      text: 'Si',
       role: 'confirm',
       handler: () => {
         console.log('Alert confirmed');
@@ -36,14 +41,22 @@ export class TareasPPage implements OnInit {
   async presentAlert() {
     const alert = await this.alertController.create({
       header: '¿Estás seguro?',
-      message: 'Esta acción no se puede deshacer.',
+      message: 'Esta acción no se puede deshacer.', // Puedes agregar un mensaje adicional
       buttons: this.alertButtons,
       backdropDismiss: false,
-      mode: 'ios', // Forzar el modo iOS
+      mode: 'ios' // Forzar el modo iOS
     });
 
     await alert.present();
     const { role } = await alert.onDidDismiss();
+    if(role=='confirm'){
+      const loading=await this.utilSVC.loading()
+      await loading.present()
+        this.firebase.signOut()
+        loading.dismiss()
+    }
+     
+    console.log(role)
     this.setResult(new CustomEvent('dismiss', { detail: { role: role ?? 'unknown' } }));
   }
 
