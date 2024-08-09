@@ -60,6 +60,7 @@ export class RegistroPage implements OnInit {
       await loading.present();
       let path = `users/${uid}`;
       delete this.form.value.password;
+      delete this.form.value.confirmPassword;
       this.firebase.setDocument(path, this.form.value).then(async res => {
         this.utilsSVC.saveInLocalStorage('user', this.form.value);
         this.utilsSVC.routerLink('/home');

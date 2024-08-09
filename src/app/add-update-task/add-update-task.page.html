@@ -29,6 +29,17 @@
       <div *ngIf="form.get('description')?.errors?.['minlength']">Este campo requiere al menos 10 caracteres.</div>
     </div>
 
+    <!-- Select de categoría con ngFor -->
+    <ion-item>
+      <ion-label position="floating">Categoría</ion-label>
+      <ion-select formControlName="category">
+        <ion-select-option *ngFor="let categoria of categorias" [value]="categoria">{{ categoria }}</ion-select-option>
+      </ion-select>
+    </ion-item>
+    <div *ngIf="form.get('category')?.errors && form.get('category')?.dirty" class="validators">
+      <div *ngIf="form.get('category')?.errors?.['required']">Este campo es requerido.</div>
+    </div>
+
     <ion-item>
       <ion-label position="floating">Fecha de Inicio</ion-label>
       <ion-datetime displayFormat="MMM DD, YYYY HH:mm" formControlName="startTime"></ion-datetime>
@@ -45,6 +56,6 @@
       <div *ngIf="form.get('endTime')?.errors?.['required']">Este campo es requerido.</div>
     </div>
 
-    <ion-button expand="full" (click)="save()" [disabled]="!form.valid">{{ task ? 'Actualizar Tarea' : 'Crear Tarea' }}</ion-button>
+    <ion-button type="submit" expand="full" (click)="save()" [disabled]="!form.valid">{{ task ? 'Actualizar Tarea' : 'Crear Tarea' }}</ion-button>
   </form>
 </ion-content>

@@ -296,13 +296,16 @@ export class FirebaseService {
     }
   }
 
-  getSubCollection(path: string, subCollectionName: string) {
-    return this.firestore.doc(path).collection(subCollectionName).valueChanges({ idField: 'id' });
+  getSubCollection<T>(path: string, subCollection: string): Observable<T[]> {
+    return this.firestore.collection<T>(`${path}/${subCollection}`).valueChanges({ idField: 'id' });
   }
 
+
   addToSubcollection(path: string, subcollectionName: string, object: any) {
-    return this.firestore.doc(path).collection(subcollectionName).add(object);
+    const collectionPath = `${path}/${subcollectionName}`;
+    return this.firestore.collection(collectionPath).add(object);
   }
+  
 
   updateDocument(path: string, object: any) {
     return this.firestore.doc(path).update(object);

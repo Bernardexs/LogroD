@@ -43,6 +43,7 @@ export class HomePage implements OnInit {
   async ngOnInit() {
     await this.loadGoogleCalendarEvents();
   }
+ 
 
 
   public alertButtons = [
@@ -162,6 +163,7 @@ export class HomePage implements OnInit {
       console.error('Error adding event to Google Calendar', error);
     }
   }
+ 
 
   async deleteTask(taskId: string) {
     // Implementar la lógica para eliminar la tarea tanto de Firebase como de Google Calendar si es necesario
