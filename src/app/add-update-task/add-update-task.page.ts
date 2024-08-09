@@ -43,44 +43,58 @@ export class AddUpdateTaskPage implements OnInit {
 
   async save() {
     if (this.form.valid) {
-      const formValue = this.form.value;
-      const taskData: Task = {
-        ...formValue, // Includes title, description, startTime, endTime, and category
-        completed: false // si tienes un campo de completado, o lo que corresponda.
-      };
+        const formValue = this.form.value;
+        const taskData: Task = {
+            ...formValue, // Incluye title, description, startTime, endTime, y category
+            completed: this.task?.completed || false // Mantener el estado de completado
+        };
 
-      this.utilSVC.loading(); // Mostrar indicador de carga
+        this.utilSVC.loading(); // Mostrar indicador de carga
 
-      try {
-        // Crear la nueva tarea en Firebase
-        const taskRef = await this.firebase.addToSubcollection(`users/${this.user.uid}`, 'tasks', taskData);
+        try {
+            if (this.task && this.task.id) {
+                // Actualizar tarea existente
+                const taskPath = `users/${this.user.uid}/tasks/${this.task.id}`;
+                await this.firebase.updateDocument(taskPath, taskData);
 
-        // Mostrar mensaje de éxito
-        this.utilSVC.presentToast({
-          message: 'Tarea creada exitosamente',
-          color: 'success',
-          icon: 'checkmark-circle-outline',
-          duration: 1500
-        });
-        console.log(this.form.value);
+                // Mostrar mensaje de éxito
+                this.utilSVC.presentToast({
+                    message: 'Tarea actualizada exitosamente',
+                    color: 'success',
+                    icon: 'checkmark-circle-outline',
+                    duration: 1500
+                });
+            } else {
+                // Crear nueva tarea
+                await this.firebase.addToSubcollection(`users/${this.user.uid}`, 'tasks', taskData);
 
-        // Emitir un evento con los datos de la tarea creada, incluyendo la categoría
-        await this.modalController.dismiss(this.form.value);
+                // Mostrar mensaje de éxito
+                this.utilSVC.presentToast({
+                    message: 'Tarea creada exitosamente',
+                    color: 'success',
+                    icon: 'checkmark-circle-outline',
+                    duration: 1500
+                });
+            }
 
-      } catch (error) {
-        // Mostrar mensaje de error
-        this.utilSVC.presentToast({
-          message: String(error), // Convertir el error a string
-          color: 'warning',
-          icon: 'alert-circle-outline',
-          duration: 5000
-        });
+            // Emitir un evento con los datos de la tarea creada/actualizada, incluyendo la categoría
+            await this.modalController.dismiss(this.form.value);
 
-      } finally {
-        this.utilSVC.dismissLoading(); // Ocultar indicador de carga
-      }
+        } catch (error) {
+            // Mostrar mensaje de error
+            this.utilSVC.presentToast({
+                message: String(error), // Convertir el error a string
+                color: 'warning',
+                icon: 'alert-circle-outline',
+                duration: 5000
+            });
+
+        } finally {
+            this.utilSVC.dismissLoading(); // Ocultar indicador de carga
+        }
     }
-  }
+}
+
 
   async dismissModal() {
     await this.modalController.dismiss();

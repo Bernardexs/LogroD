@@ -16,8 +16,8 @@ export class TareasPPage implements OnInit {
   categorias: string[] = ['Todos', 'Calle', 'Trabajo', 'Hogar', 'Otro'];
   tasks: Task[] = [];
   filteredTasks: Task[] = [];
-  searchQuery: string = ''; 
-  selectedCategory: string = 'Todos'; 
+  searchQuery: string = ''; // Para almacenar la consulta de búsqueda
+  selectedCategory: string = 'Todos'; // Variable para almacenar la categoría seleccionada
 
   constructor(
     private alertController: AlertController,
@@ -31,8 +31,9 @@ export class TareasPPage implements OnInit {
   ionViewWillEnter() {
     this.getTasks();
 
+    // Restablecer el valor del ion-select
     if (this.categorySelect) {
-      this.categorySelect.value = 'Todos'; 
+      this.categorySelect.value = 'Todos'; // Establecer el valor predeterminado a 'Todos'
     }
   }
 
@@ -44,7 +45,7 @@ export class TareasPPage implements OnInit {
       next: (res: Task[]) => {
         this.tasks = res;
         this.filteredTasks = res;
-        this.applyFilters(); 
+        this.applyFilters(); // Aplicar filtros si hay algún establecido
         sub.unsubscribe();
       },
       error: (error) => {
@@ -54,7 +55,7 @@ export class TareasPPage implements OnInit {
   }
 
   filterTasks(event: any) {
-    this.selectedCategory = event.detail.value || 'Todos'; 
+    this.selectedCategory = event.detail.value || 'Todos'; // Almacenar la categoría seleccionada
     this.applyFilters();
   }
 
@@ -66,12 +67,14 @@ export class TareasPPage implements OnInit {
     }
 
     this.filteredTasks = tasksToFilter;
+
+    // Aplicar búsqueda en las tareas filtradas
     this.searchTasks(this.searchQuery);
     console.log('Filtered Tasks:', this.filteredTasks);
   }
 
   searchTasks(searchTerm: string) {
-    this.searchQuery = searchTerm;  
+    this.searchQuery = searchTerm;  // Almacenar la búsqueda actual
     let tasksToSearch = this.filteredTasks;
 
     if (searchTerm && searchTerm.trim() !== '') {
@@ -79,6 +82,7 @@ export class TareasPPage implements OnInit {
         task.title.toLowerCase().includes(searchTerm.toLowerCase())
       );
     } else {
+      // Si no hay término de búsqueda, mostrar las tareas filtradas por categoría
       this.filteredTasks = tasksToSearch;
     }
 
@@ -87,61 +91,46 @@ export class TareasPPage implements OnInit {
 
   async addOrUpdateTask(task?: Task) {
     const modal = await this.modalController.create({
-      component: AddUpdateTaskPage,
-      componentProps: { task }
+        component: AddUpdateTaskPage,
+        componentProps: { task } // Pasar la tarea para editar si existe
     });
 
     modal.onDidDismiss().then(async (result) => {
-      if (result.data) {
-        result.data.startTime = new Date(result.data.startTime);
-        result.data.endTime = new Date(result.data.endTime);
-        console.log('Task data received:', result.data); 
-        this.getTasks(); 
-      }
+        if (result.data) {
+            result.data.startTime = new Date(result.data.startTime);
+            result.data.endTime = new Date(result.data.endTime);
+            console.log('Task data received:', result.data); 
+            this.getTasks(); // Refrescar la lista de tareas después de agregar/actualizar
+        }
     });
 
     return await modal.present();
-  }
+}
 
   async toggleTaskCompletion(task: Task) {
-    task.completed = !task.completed;
-
+    task.completed = !task.completed; // Cambiar el estado de completado
     let user = this.utilSVC.getFromLocalStorage('user');
     let path = `users/${user.uid}/tasks/${task.id}`;
-
-    try {
-      await this.firebase.updateDocument(path, { completed: task.completed });
-      console.log(`Task ${task.title} marked as ${task.completed ? 'completed' : 'not completed'}`);
-    } catch (error) {
-      console.error('Error updating task:', error);
-    }
+    
+    await this.firebase.updateDocument(path, { completed: task.completed });
   }
 
   async deleteTask(task: Task) {
     const alert = await this.alertController.create({
       header: 'Confirmar eliminación',
-      message: `¿Estás seguro de que deseas eliminar la tarea "${task.title}"? Esta acción no se puede deshacer.`,
+      message: `¿Estás seguro de que quieres eliminar la tarea "${task.title}"?`,
       buttons: [
         {
           text: 'Cancelar',
           role: 'cancel',
-          handler: () => {
-            console.log('Eliminación cancelada');
-          },
         },
         {
           text: 'Eliminar',
-          role: 'confirm',
           handler: async () => {
             let user = this.utilSVC.getFromLocalStorage('user');
             let path = `users/${user.uid}/tasks/${task.id}`;
-            try {
-              await this.firebase.deleteDocument(path);
-              console.log(`Tarea "${task.title}" eliminada con éxito`);
-              this.getTasks(); // Refrescar la lista de tareas después de eliminar
-            } catch (error) {
-              console.error('Error al eliminar la tarea:', error);
-            }
+            await this.firebase.deleteDocument(path);
+            this.getTasks(); // Refrescar la lista de tareas después de eliminar
           },
         },
       ],
@@ -163,7 +152,7 @@ export class TareasPPage implements OnInit {
           },
         },
         {
-          text: 'Si',
+          text: 'Sí',
           role: 'confirm',
           handler: async () => {
             const loading = await this.utilSVC.loading();
@@ -179,6 +168,6 @@ export class TareasPPage implements OnInit {
 
     await alert.present();
     const { role } = await alert.onDidDismiss();
-    console.log(`Cerrado con rol: ${role}`);
+    console.log(`Dismissed with role: ${role}`);
   }
 }

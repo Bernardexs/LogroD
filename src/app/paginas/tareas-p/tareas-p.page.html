@@ -38,6 +38,15 @@
         <p>{{ task.startTime }}</p>
         <p>{{ task.endTime }}</p>
       </ion-label>
+      <!-- Icono de Editar -->
+      <ion-button 
+        fill="clear" 
+        color="primary" 
+        slot="end" 
+        (click)="addOrUpdateTask(task)">
+        <ion-icon name="pencil-outline"></ion-icon>
+      </ion-button>
+      <!-- Icono de Eliminar -->
       <ion-button 
         fill="clear" 
         color="danger" 
@@ -85,18 +94,6 @@
                 <ion-icon name="log-out-outline" slot="start"></ion-icon>
                 <ion-label>Cerrar Sesión</ion-label>
               </ion-item>
-              <ion-popover trigger="nested-trigger" [dismissOnSelect]="true" side="end">
-                <ng-template>
-                  <ion-content>
-                    <ion-list>
-                      <ion-item button>
-                        <ion-icon name="options-outline" slot="start"></ion-icon>
-                        <ion-label>Nested option</ion-label>
-                      </ion-item>
-                    </ion-list>
-                  </ion-content>
-                </ng-template>
-              </ion-popover>
             </ion-list>
           </ion-content>
         </ng-template>
