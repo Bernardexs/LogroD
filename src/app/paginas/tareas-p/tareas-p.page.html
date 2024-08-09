@@ -38,6 +38,13 @@
         <p>{{ task.startTime }}</p>
         <p>{{ task.endTime }}</p>
       </ion-label>
+      <ion-button 
+        fill="clear" 
+        color="danger" 
+        slot="end" 
+        (click)="deleteTask(task)">
+        <ion-icon name="trash-outline"></ion-icon>
+      </ion-button>
     </ion-item>
     <ion-item *ngIf="filteredTasks.length === 0">
       <ion-label>No hay tareas para mostrar</ion-label>

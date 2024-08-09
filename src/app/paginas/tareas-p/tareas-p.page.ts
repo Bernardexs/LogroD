@@ -104,9 +104,8 @@ export class TareasPPage implements OnInit {
   }
 
   async toggleTaskCompletion(task: Task) {
-    task.completed = !task.completed; // Cambiar el estado de completado
+    task.completed = !task.completed;
 
-    // Actualizar la tarea en Firebase
     let user = this.utilSVC.getFromLocalStorage('user');
     let path = `users/${user.uid}/tasks/${task.id}`;
 
@@ -118,16 +117,49 @@ export class TareasPPage implements OnInit {
     }
   }
 
+  async deleteTask(task: Task) {
+    const alert = await this.alertController.create({
+      header: 'Confirmar eliminación',
+      message: `¿Estás seguro de que deseas eliminar la tarea "${task.title}"? Esta acción no se puede deshacer.`,
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+          handler: () => {
+            console.log('Eliminación cancelada');
+          },
+        },
+        {
+          text: 'Eliminar',
+          role: 'confirm',
+          handler: async () => {
+            let user = this.utilSVC.getFromLocalStorage('user');
+            let path = `users/${user.uid}/tasks/${task.id}`;
+            try {
+              await this.firebase.deleteDocument(path);
+              console.log(`Tarea "${task.title}" eliminada con éxito`);
+              this.getTasks(); // Refrescar la lista de tareas después de eliminar
+            } catch (error) {
+              console.error('Error al eliminar la tarea:', error);
+            }
+          },
+        },
+      ],
+    });
+
+    await alert.present();
+  }
+
   async presentAlert() {
     const alert = await this.alertController.create({
       header: '¿Estás seguro?',
       message: 'Esta acción no se puede deshacer.', 
       buttons: [
         {
-          text: 'Cancel',
+          text: 'Cancelar',
           role: 'cancel',
           handler: () => {
-            console.log('Alert canceled');
+            console.log('Alerta cancelada');
           },
         },
         {
@@ -147,6 +179,6 @@ export class TareasPPage implements OnInit {
 
     await alert.present();
     const { role } = await alert.onDidDismiss();
-    console.log(`Dismissed with role: ${role}`);
+    console.log(`Cerrado con rol: ${role}`);
   }
 }
