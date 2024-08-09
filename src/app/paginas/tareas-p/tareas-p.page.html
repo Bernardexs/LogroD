@@ -26,8 +26,12 @@
   </ion-searchbar>
   
   <ion-list>
-    <ion-item *ngFor="let task of searchResults">
-      <ion-checkbox slot="start" [checked]="task.completed"></ion-checkbox>
+    <ion-item *ngFor="let task of filteredTasks">
+      <ion-checkbox 
+        slot="start" 
+        [checked]="task.completed" 
+        (ionChange)="toggleTaskCompletion(task)">
+      </ion-checkbox>
       <ion-label>
         <h2>{{ task.title }}</h2>
         <p>{{ task.description }}</p>
@@ -35,7 +39,7 @@
         <p>{{ task.endTime }}</p>
       </ion-label>
     </ion-item>
-    <ion-item *ngIf="searchResults.length === 0">
+    <ion-item *ngIf="filteredTasks.length === 0">
       <ion-label>No hay tareas para mostrar</ion-label>
     </ion-item>
   </ion-list>

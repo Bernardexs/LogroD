@@ -14,11 +14,10 @@ export class TareasPPage implements OnInit {
   @ViewChild('categorySelect', { static: false }) categorySelect!: IonSelect;
 
   categorias: string[] = ['Todos', 'Calle', 'Trabajo', 'Hogar', 'Otro'];
-  tasks: Task[] = []; // Todas las tareas
-  filteredTasks: Task[] = []; // Tareas filtradas por categoría
-  searchResults: Task[] = []; // Tareas filtradas por búsqueda
-  searchQuery: string = ''; // Para almacenar la consulta de búsqueda
-  selectedCategory: string = 'Todos'; // Variable para almacenar la categoría seleccionada
+  tasks: Task[] = [];
+  filteredTasks: Task[] = [];
+  searchQuery: string = ''; 
+  selectedCategory: string = 'Todos'; 
 
   constructor(
     private alertController: AlertController,
@@ -28,13 +27,12 @@ export class TareasPPage implements OnInit {
   ) {}
 
   ngOnInit() {}
-
+  
   ionViewWillEnter() {
     this.getTasks();
 
-    // Restablecer el valor del ion-select
     if (this.categorySelect) {
-      this.categorySelect.value = 'Todos'; // Establecer el valor predeterminado a 'Todos'
+      this.categorySelect.value = 'Todos'; 
     }
   }
 
@@ -46,7 +44,8 @@ export class TareasPPage implements OnInit {
       next: (res: Task[]) => {
         this.tasks = res;
         this.filteredTasks = res;
-        this.applyFilters(); // Aplicar filtros si hay algún establecido
+        this.applyFilters(); 
+        sub.unsubscribe();
       },
       error: (error) => {
         console.error('Error fetching tasks:', error);
@@ -55,7 +54,7 @@ export class TareasPPage implements OnInit {
   }
 
   filterTasks(event: any) {
-    this.selectedCategory = event.detail.value || 'Todos'; // Almacenar la categoría seleccionada
+    this.selectedCategory = event.detail.value || 'Todos'; 
     this.applyFilters();
   }
 
@@ -67,24 +66,23 @@ export class TareasPPage implements OnInit {
     }
 
     this.filteredTasks = tasksToFilter;
-    this.applySearch(); // Aplicar búsqueda después del filtro
-  }
-
-  applySearch() {
-    if (this.searchQuery && this.searchQuery.trim() !== '') {
-      this.searchResults = this.filteredTasks.filter(task =>
-        task.title.toLowerCase().includes(this.searchQuery.toLowerCase())
-      );
-    } else {
-      this.searchResults = this.filteredTasks; // Mostrar las tareas filtradas si no hay búsqueda
-    }
-
-    console.log('Search Results:', this.searchResults);
+    this.searchTasks(this.searchQuery);
+    console.log('Filtered Tasks:', this.filteredTasks);
   }
 
   searchTasks(searchTerm: string) {
-    this.searchQuery = searchTerm;  // Almacenar la búsqueda actual
-    this.applySearch(); // Aplicar la búsqueda
+    this.searchQuery = searchTerm;  
+    let tasksToSearch = this.filteredTasks;
+
+    if (searchTerm && searchTerm.trim() !== '') {
+      this.filteredTasks = tasksToSearch.filter(task => 
+        task.title.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    } else {
+      this.filteredTasks = tasksToSearch;
+    }
+
+    console.log('Searched Tasks:', this.filteredTasks);
   }
 
   async addOrUpdateTask(task?: Task) {
@@ -98,11 +96,26 @@ export class TareasPPage implements OnInit {
         result.data.startTime = new Date(result.data.startTime);
         result.data.endTime = new Date(result.data.endTime);
         console.log('Task data received:', result.data); 
-        this.getTasks(); // Refrescar la lista de tareas después de agregar/actualizar
+        this.getTasks(); 
       }
     });
 
     return await modal.present();
+  }
+
+  async toggleTaskCompletion(task: Task) {
+    task.completed = !task.completed; // Cambiar el estado de completado
+
+    // Actualizar la tarea en Firebase
+    let user = this.utilSVC.getFromLocalStorage('user');
+    let path = `users/${user.uid}/tasks/${task.id}`;
+
+    try {
+      await this.firebase.updateDocument(path, { completed: task.completed });
+      console.log(`Task ${task.title} marked as ${task.completed ? 'completed' : 'not completed'}`);
+    } catch (error) {
+      console.error('Error updating task:', error);
+    }
   }
 
   async presentAlert() {
