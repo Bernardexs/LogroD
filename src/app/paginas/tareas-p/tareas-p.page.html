@@ -1,26 +1,27 @@
 <ion-header>
   <ion-toolbar>
     <ion-title class="titulo">Tareas pendientes</ion-title>
-    <ion-list>
-      <ion-item>
-        <ion-select 
-          slot="start" 
-          aria-label="Filter" 
-          [(ngModel)]="selectedCategory" 
-          (ionChange)="filterTasks($event)" 
-          interface="popover" 
-          placeholder="Filtrar tareas">
-          <ion-icon slot="end" name="funnel-outline"></ion-icon>
-          <ion-select-option *ngFor="let categoria of categorias" [value]="categoria">{{ categoria }}</ion-select-option>
-        </ion-select>
-        <!-- Botón "Quitar filtro" solo visible si hay un filtro activo -->
-        <ion-button *ngIf="selectedCategory" slot="end" (click)="clearFilter()">Quitar filtro</ion-button>
-      </ion-item>
-    </ion-list>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
+  <ion-list>
+    <ion-item class="filtrar">
+      <ion-select 
+        slot="start" 
+        aria-label="Filter" 
+        [(ngModel)]="selectedCategory" 
+        (ionChange)="filterTasks($event)" 
+        interface="popover" 
+        placeholder="Filtrar tareas">
+        <ion-icon slot="end" name="funnel-outline"></ion-icon>
+        <ion-select-option *ngFor="let categoria of categorias" [value]="categoria">{{ categoria }}</ion-select-option>
+      </ion-select>
+      <!-- Botón "Quitar filtro" solo visible si hay un filtro activo -->
+      <ion-button *ngIf="selectedCategory" slot="end" (click)="clearFilter()">Quitar filtro</ion-button>
+    </ion-item>
+  </ion-list>
+
   <ion-searchbar 
     class="BuscarT"  
     (ionInput)="searchTasks($event.target.value || '')" 
@@ -79,7 +80,8 @@
     </ion-tab-button>
 
     <ion-tab-button tab="menu" id="popover-button">
-      <ion-icon name="menu-outline"></ion-icon>
+      
+      <ion-icon  name="menu-outline"></ion-icon>
       <ion-popover trigger="popover-button" [dismissOnSelect]="true">
         <ng-template>
           <ion-content>
@@ -100,6 +102,7 @@
           </ion-content>
         </ng-template>
       </ion-popover>
+
     </ion-tab-button>
   </ion-tab-bar>
 </ion-footer>

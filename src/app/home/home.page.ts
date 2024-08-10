@@ -195,5 +195,6 @@ export class HomePage implements OnInit {
   handleSignoutClick() {
     this.calendarService.handleSignoutClick();
   }
+  
 
 }

@@ -14,28 +14,38 @@ ion-header {
   font-size: 25px;
 }
 
+.filtrar {
+  margin-top: 10px;
+}
+
 ion-toolbar {
   --background: #fff;
   --color: #000;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .BuscarT {
-  margin: 5% 5% 0 5%;
+  margin: 20px;
   --background: #f3f5f7;
-  --border-radius: 20px;
-  width: 90%;
+  --border-radius: 10px;
+  width: calc(100% - 40px);
+  --color: #000;
+  --placeholder-color: #888;
 }
 
-/* Estilo base para el ion-item */
-ion-item {
-  --background: #fefdff;
-  --border-radius: 10px;
-  width: 90%;
+.tasks-list {
   display: flex;
-  justify-content: center;
-  padding: 5px; /* Espaciado mejorado */
-  position: relative; /* Necesario para el pseudo-elemento */
-  transition: background-color 0.3s ease; /* Transición suave para el fondo */
+  flex-direction: column;
+  align-items: center;
+}
+
+.task-item {
+  --background: #ffffff;
+  --border-radius: 10px;
+  margin: 10px 0;
+  width: 90%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s;
 }
 
 /* Estilo para cuando el ion-item está seleccionado */
@@ -112,7 +122,12 @@ ion-tab-button {
 
 ion-tab-button:hover {
   --color: #ffffff; /* Color blanco cuando se pasa el mouse por encima */
-  --background: rgba(255, 255, 255, 0.1); /* Fondo más claro cuando se pasa el mouse por encima */
+  --background: rgba(
+    255,
+    255,
+    255,
+    0.1
+  ); /* Fondo más claro cuando se pasa el mouse por encima */
 }
 
 ion-tab-button[tab="tareas"] {
@@ -128,7 +143,12 @@ ion-tab-button[tab="menu"] {
 }
 
 ion-tab-button.selected {
-  --background: rgba(255, 255, 255, 0.2); /* Fondo más claro cuando el botón está seleccionado */
+  --background: rgba(
+    255,
+    255,
+    255,
+    0.2
+  ); /* Fondo más claro cuando el botón está seleccionado */
   --color: #ffffff; /* Color blanco cuando el botón está seleccionado */
 }
 
