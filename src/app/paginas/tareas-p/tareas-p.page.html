@@ -4,7 +4,7 @@
     <ion-list>
       <ion-item>
         <ion-select 
-          slot="end" 
+          slot="start" 
           aria-label="Filter" 
           [(ngModel)]="selectedCategory" 
           (ionChange)="filterTasks($event)" 
@@ -13,6 +13,8 @@
           <ion-icon slot="end" name="funnel-outline"></ion-icon>
           <ion-select-option *ngFor="let categoria of categorias" [value]="categoria">{{ categoria }}</ion-select-option>
         </ion-select>
+        <!-- Botón "Quitar filtro" solo visible si hay un filtro activo -->
+        <ion-button *ngIf="selectedCategory" slot="end" (click)="clearFilter()">Quitar filtro</ion-button>
       </ion-item>
     </ion-list>
   </ion-toolbar>
@@ -21,7 +23,7 @@
 <ion-content>
   <ion-searchbar 
     class="BuscarT"  
-    (ionInput)="onSearchChange($event)" 
+    (ionInput)="searchTasks($event.target.value || '')" 
     placeholder="Buscar tarea">
   </ion-searchbar>
   

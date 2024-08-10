@@ -14,10 +14,10 @@ import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 export class TareasPPage implements OnInit {
   @ViewChild('categorySelect', { static: false }) categorySelect!: IonSelect;
 
-  categorias: string[] = ['Todos', 'Calle', 'Trabajo', 'Hogar', 'Otro'];
+  categorias: string[] = ['Calle', 'Trabajo', 'Hogar', 'Otro'];
   filteredTasks: Task[] = [];
   searchQuery: string = ''; // Para almacenar la consulta de búsqueda
-  selectedCategory: string = 'Todos'; // Variable para almacenar la categoría seleccionada
+  selectedCategory: string = ''; // Variable para almacenar la categoría seleccionada
 
   private searchSubject = new Subject<string>(); // Para controlar la búsqueda dinámica
 
@@ -42,7 +42,7 @@ export class TareasPPage implements OnInit {
     this.getTasks();
     // Restablecer el valor del ion-select
     if (this.categorySelect) {
-      this.categorySelect.value = 'Todos'; // Establecer el valor predeterminado a 'Todos'
+      this.categorySelect.value = ''; // Establecer el valor predeterminado a quitar filtro
     }
   }
 
@@ -51,22 +51,34 @@ export class TareasPPage implements OnInit {
   }
 
   filterTasks(event: any) {
-    this.selectedCategory = event.detail.value || 'Todos'; // Almacenar la categoría seleccionada
+    this.selectedCategory = event.detail.value || ''; // Almacenar la categoría seleccionada
     this.searchTasks(this.searchQuery); // Aplicar búsqueda con el filtro actual
   }
 
-  searchTasks(searchTerm: string) {
-    this.searchQuery = searchTerm; // Almacenar la búsqueda actual
-    let user = this.utilSVC.getFromLocalStorage('user');
-    let path = `users/${user.uid}`;
-
-    this.firebase.searchTasksByTitle(path, searchTerm, this.selectedCategory).subscribe((tasks) => {
-      this.filteredTasks = tasks;
-      console.log('Searched and Filtered Tasks:', this.filteredTasks);
-    }, (error) => {
-      console.error('Error fetching tasks:', error);
-    });
+  clearFilter() {
+    this.selectedCategory = ''; // Quitar el filtro seleccionando vacío
+    if (this.categorySelect) {
+      this.categorySelect.value = ''; // Reiniciar el select a sin filtro
+    }
+    this.getTasks(); // Recargar la lista completa de tareas
   }
+  
+
+searchTasks(searchTerm: string) {
+  this.searchQuery = searchTerm; // Almacenar la búsqueda actual
+  let user = this.utilSVC.getFromLocalStorage('user');
+  let path = `users/${user.uid}`;
+
+  this.firebase.searchTasksByTitle(path, searchTerm, this.selectedCategory).subscribe((tasks) => {
+    this.filteredTasks = tasks;
+    console.log('Searched and Filtered Tasks:', this.filteredTasks);
+  }, (error) => {
+    console.error('Error fetching tasks:', error);
+    if (error.code === 'failed-precondition' || error.code === 'unavailable') {
+      alert('Parece que la consulta requiere un índice adicional en Firestore. Por favor, revisa la consola de Firebase para crear el índice.');
+    }
+  });
+}
 
   onSearchChange(event: any) {
     const searchTerm = event.target.value || '';
@@ -92,12 +104,29 @@ export class TareasPPage implements OnInit {
   }
 
   async toggleTaskCompletion(task: Task) {
-    task.completed = !task.completed; // Cambiar el estado de completado
-    let user = this.utilSVC.getFromLocalStorage('user');
-    let path = `users/${user.uid}/tasks/${task.id}`;
-    
-    await this.firebase.updateDocument(path, { completed: task.completed });
+    try {
+      task.completed = !task.completed; // Cambiar el estado de completado
+      let user = this.utilSVC.getFromLocalStorage('user');
+      let path = `users/${user.uid}/tasks/${task.id}`;
+      
+      await this.firebase.updateDocument(path, { completed: task.completed });
+      
+      // Opcional: puedes mostrar un mensaje de éxito
+      this.utilSVC.presentToast({
+        message: `La tarea "${task.title}" ha sido marcada como ${task.completed ? 'completada' : 'pendiente'}.`,
+        color: 'success',
+        duration: 1500
+      });
+    } catch (error) {
+      console.error('Error updating task:', error);
+      this.utilSVC.presentToast({
+        message: 'Hubo un error al actualizar la tarea.',
+        color: 'danger',
+        duration: 3000
+      });
+    }
   }
+  
 
   async deleteTask(task: Task) {
     const alert = await this.alertController.create({
