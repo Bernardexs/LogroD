@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { AngularFirestore, Query } from '@angular/fire/compat/firestore';
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile, sendPasswordResetEmail, signInWithPopup, GoogleAuthProvider, FacebookAuthProvider, AuthCredential, fetchSignInMethodsForEmail, linkWithCredential } from 'firebase/auth';
 import { User } from '../models/user.model';
 import { Task } from '../models/task.model';
@@ -34,16 +34,6 @@ export class FirebaseService {
   constructor() {
     this.provider = new FacebookAuthProvider();
   }
-
- 
-
-  
-
-  
-  
-
-  
-  
 
   async getCalendarEvents() {
     try {
@@ -100,8 +90,6 @@ export class FirebaseService {
     }
   }
 
-  // Otros métodos...
-
   getAuth() {
     return getAuth();
   }
@@ -143,6 +131,7 @@ export class FirebaseService {
     console.log('entro a getDocument')
     return (await getDoc(doc(getFirestore(), path))).data();
   }
+
   async signOut() {
     const auth = getAuth();
     await auth.signOut();
@@ -300,12 +289,27 @@ export class FirebaseService {
     return this.firestore.collection<T>(`${path}/${subCollection}`).valueChanges({ idField: 'id' });
   }
 
+  querySubCollection(path: string, subCollection: string, field: string, operation: any, value: any): Observable<Task[]> {
+    return this.firestore.collection<Task>(`${path}/${subCollection}`, ref => ref.where(field, operation, value)).valueChanges({ idField: 'id' });
+  }
+
+  searchTasksByTitle(path: string, searchTerm: string, selectedCategory?: string): Observable<Task[]> {
+    return this.firestore.collection<Task>(`${path}/tasks`, ref => {
+      let query: Query = ref;
+      if (selectedCategory && selectedCategory !== 'Todos') {
+        query = query.where('category', '==', selectedCategory);
+      }
+      if (searchTerm) {
+        query = query.where('title', '>=', searchTerm).where('title', '<=', searchTerm + '\uf8ff');
+      }
+      return query;
+    }).valueChanges({ idField: 'id' });
+  }
 
   addToSubcollection(path: string, subcollectionName: string, object: any) {
     const collectionPath = `${path}/${subcollectionName}`;
     return this.firestore.collection(collectionPath).add(object);
   }
-  
 
   updateDocument(path: string, object: any) {
     return this.firestore.doc(path).update(object);

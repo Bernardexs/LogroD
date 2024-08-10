@@ -21,7 +21,7 @@
 <ion-content>
   <ion-searchbar 
     class="BuscarT"  
-    (ionInput)="searchTasks($event.target.value || '')" 
+    (ionInput)="onSearchChange($event)" 
     placeholder="Buscar tarea">
   </ion-searchbar>
   

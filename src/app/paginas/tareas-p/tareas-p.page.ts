@@ -4,6 +4,7 @@ import { FirebaseService } from 'src/app/services/firebase.service';
 import { UtilsService } from 'src/app/services/utils.service';
 import { Task } from 'src/app/models/task.model';
 import { AddUpdateTaskPage } from 'src/app/add-update-task/add-update-task.page';
+import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 
 @Component({
   selector: 'app-tareas-p',
@@ -14,10 +15,11 @@ export class TareasPPage implements OnInit {
   @ViewChild('categorySelect', { static: false }) categorySelect!: IonSelect;
 
   categorias: string[] = ['Todos', 'Calle', 'Trabajo', 'Hogar', 'Otro'];
-  tasks: Task[] = [];
   filteredTasks: Task[] = [];
   searchQuery: string = ''; // Para almacenar la consulta de búsqueda
   selectedCategory: string = 'Todos'; // Variable para almacenar la categoría seleccionada
+
+  private searchSubject = new Subject<string>(); // Para controlar la búsqueda dinámica
 
   constructor(
     private alertController: AlertController,
@@ -26,11 +28,18 @@ export class TareasPPage implements OnInit {
     private modalController: ModalController,
   ) {}
 
-  ngOnInit() {}
-  
+  ngOnInit() {
+    // Configurar búsqueda dinámica con debounce
+    this.searchSubject.pipe(
+      debounceTime(300), // Espera 300ms después de que el usuario deje de escribir
+      distinctUntilChanged() // Realiza la búsqueda solo si el término ha cambiado
+    ).subscribe(searchTerm => {
+      this.searchTasks(searchTerm);
+    });
+  }
+
   ionViewWillEnter() {
     this.getTasks();
-
     // Restablecer el valor del ion-select
     if (this.categorySelect) {
       this.categorySelect.value = 'Todos'; // Establecer el valor predeterminado a 'Todos'
@@ -38,74 +47,49 @@ export class TareasPPage implements OnInit {
   }
 
   getTasks() {
-    let user = this.utilSVC.getFromLocalStorage('user');
-    let path = `users/${user.uid}`;
-
-    let sub = this.firebase.getSubCollection<Task>(path, 'tasks').subscribe({
-      next: (res: Task[]) => {
-        this.tasks = res;
-        this.filteredTasks = res;
-        this.applyFilters(); // Aplicar filtros si hay algún establecido
-        sub.unsubscribe();
-      },
-      error: (error) => {
-        console.error('Error fetching tasks:', error);
-      }
-    });
+    this.searchTasks(''); // Inicialmente cargar todas las tareas
   }
 
   filterTasks(event: any) {
     this.selectedCategory = event.detail.value || 'Todos'; // Almacenar la categoría seleccionada
-    this.applyFilters();
-  }
-
-  applyFilters() {
-    let tasksToFilter = this.tasks;
-
-    if (this.selectedCategory && this.selectedCategory !== 'Todos') {
-      tasksToFilter = this.tasks.filter(task => task.category === this.selectedCategory);
-    }
-
-    this.filteredTasks = tasksToFilter;
-
-    // Aplicar búsqueda en las tareas filtradas
-    this.searchTasks(this.searchQuery);
-    console.log('Filtered Tasks:', this.filteredTasks);
+    this.searchTasks(this.searchQuery); // Aplicar búsqueda con el filtro actual
   }
 
   searchTasks(searchTerm: string) {
-    this.searchQuery = searchTerm;  // Almacenar la búsqueda actual
-    let tasksToSearch = this.filteredTasks;
+    this.searchQuery = searchTerm; // Almacenar la búsqueda actual
+    let user = this.utilSVC.getFromLocalStorage('user');
+    let path = `users/${user.uid}`;
 
-    if (searchTerm && searchTerm.trim() !== '') {
-      this.filteredTasks = tasksToSearch.filter(task => 
-        task.title.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    } else {
-      // Si no hay término de búsqueda, mostrar las tareas filtradas por categoría
-      this.filteredTasks = tasksToSearch;
-    }
+    this.firebase.searchTasksByTitle(path, searchTerm, this.selectedCategory).subscribe((tasks) => {
+      this.filteredTasks = tasks;
+      console.log('Searched and Filtered Tasks:', this.filteredTasks);
+    }, (error) => {
+      console.error('Error fetching tasks:', error);
+    });
+  }
 
-    console.log('Searched Tasks:', this.filteredTasks);
+  onSearchChange(event: any) {
+    const searchTerm = event.target.value || '';
+    this.searchSubject.next(searchTerm); // Emitir el término de búsqueda al subject
   }
 
   async addOrUpdateTask(task?: Task) {
     const modal = await this.modalController.create({
-        component: AddUpdateTaskPage,
-        componentProps: { task } // Pasar la tarea para editar si existe
+      component: AddUpdateTaskPage,
+      componentProps: { task } // Pasar la tarea para editar si existe
     });
 
     modal.onDidDismiss().then(async (result) => {
-        if (result.data) {
-            result.data.startTime = new Date(result.data.startTime);
-            result.data.endTime = new Date(result.data.endTime);
-            console.log('Task data received:', result.data); 
-            this.getTasks(); // Refrescar la lista de tareas después de agregar/actualizar
-        }
+      if (result.data) {
+        result.data.startTime = new Date(result.data.startTime);
+        result.data.endTime = new Date(result.data.endTime);
+        console.log('Task data received:', result.data); 
+        this.getTasks(); // Refrescar la lista de tareas después de agregar/actualizar
+      }
     });
 
     return await modal.present();
-}
+  }
 
   async toggleTaskCompletion(task: Task) {
     task.completed = !task.completed; // Cambiar el estado de completado

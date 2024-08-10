@@ -31,14 +31,25 @@ export class AddUpdateTaskPage implements OnInit {
       title: [this.task?.title || '', [Validators.required, Validators.minLength(4)]],
       description: [this.task?.description || '', [Validators.required, Validators.minLength(10)]],
       startTime: [this.task?.startTime || now.toISOString(), Validators.required],
-      endTime: [this.task?.endTime || new Date(now.getTime() + 60 * 60 * 1000).toISOString(), Validators.required],
-      category: [this.task?.category || '', Validators.required] // Control de categoría
+      endTime: [this.task?.endTime || new Date(now.getTime() + 60 * 1000).toISOString(), Validators.required], // 1 minuto después por defecto
+      category: [this.task?.category || '', Validators.required] 
+    }, {
+      validators: this.endTimeAfterStartTimeValidator // Validación personalizada
     });
   }
 
   ngOnInit() {
     // Obtener el usuario desde el localStorage
     this.user = this.utilSVC.getFromLocalStorage('user');
+  }
+
+  // Validación personalizada para verificar que la fecha de fin sea al menos un minuto después de la fecha de inicio
+  endTimeAfterStartTimeValidator(group: FormGroup): { [key: string]: boolean } | null {
+    const startTime = new Date(group.get('startTime')?.value).getTime();
+    const endTime = new Date(group.get('endTime')?.value).getTime();
+
+    // Verifica que la fecha de fin sea al menos el mismo día y un minuto después de la fecha de inicio
+    return (endTime > startTime + 60000) ? null : { endTimeBeforeMinInterval: true }; // 60000 ms = 1 minuto
   }
 
   async save() {
@@ -92,9 +103,18 @@ export class AddUpdateTaskPage implements OnInit {
         } finally {
             this.utilSVC.dismissLoading(); // Ocultar indicador de carga
         }
+    } else {
+        // Mostrar mensaje de error si la validación falla
+        if (this.form.hasError('endTimeBeforeMinInterval')) {
+            this.utilSVC.presentToast({
+                message: 'La fecha de fin debe ser al menos un minuto después de la fecha de inicio.',
+                color: 'danger',
+                icon: 'alert-circle-outline',
+                duration: 3000
+            });
+        }
     }
-}
-
+  }
 
   async dismissModal() {
     await this.modalController.dismiss();

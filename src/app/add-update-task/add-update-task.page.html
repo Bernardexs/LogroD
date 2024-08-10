@@ -54,6 +54,9 @@
     </ion-item>
     <div *ngIf="form.get('endTime')?.errors && form.get('endTime')?.dirty" class="validators">
       <div *ngIf="form.get('endTime')?.errors?.['required']">Este campo es requerido.</div>
+      <div *ngIf="form.hasError('endTimeBeforeMinInterval')">
+        La fecha de fin debe ser al menos un minuto después de la fecha de inicio.
+      </div>
     </div>
 
     <ion-button type="submit" expand="full" (click)="save()" [disabled]="!form.valid">{{ task ? 'Actualizar Tarea' : 'Crear Tarea' }}</ion-button>
