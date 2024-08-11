@@ -155,7 +155,7 @@ searchTasks(searchTerm: string) {
   async presentAlert() {
     const alert = await this.alertController.create({
       header: '¿Estás seguro?',
-      message: 'Esta acción no se puede deshacer.', 
+      message: 'Esta acción no se puede deshacer.',
       buttons: [
         {
           text: 'Cancelar',
@@ -170,17 +170,18 @@ searchTasks(searchTerm: string) {
           handler: async () => {
             const loading = await this.utilSVC.loading();
             await loading.present();
-            this.firebase.signOut();
-            loading.dismiss();
+            await this.firebase.signOut();
+            await loading.dismiss(); // Asegurarse de que el loader se cierra después de cerrar la sesión
           },
         },
       ],
       backdropDismiss: false,
-      mode: 'ios' 
+      mode: 'ios'
     });
-
+  
     await alert.present();
     const { role } = await alert.onDidDismiss();
     console.log(`Dismissed with role: ${role}`);
   }
+  
 }

@@ -27,25 +27,13 @@ export class UtilsService {
 
   saveInLocalStorage(key: string, value: any) {
     try {
-      const serializableValue = this.getSerializableObject(value);
-      localStorage.setItem(key, JSON.stringify(serializableValue));
+      localStorage.setItem(key, JSON.stringify(value));
     } catch (e) {
       console.error('Error saving to localStorage', e);
     }
   }
-
-  getSerializableObject(obj: any) {
-    const seen = new WeakSet();
-    return JSON.parse(JSON.stringify(obj, (key, value) => {
-      if (typeof value === 'object' && value !== null) {
-        if (seen.has(value)) {
-          return;
-        }
-        seen.add(value);
-      }
-      return value;
-    }));
-  }
+  
+ 
 
   getFromLocalStorage(key: string) {
     const item = localStorage.getItem(key);

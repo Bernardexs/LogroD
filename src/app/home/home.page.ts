@@ -72,24 +72,35 @@ export class HomePage implements OnInit {
   async presentAlert() {
     const alert = await this.alertController.create({
       header: '¿Estás seguro?',
-      message: 'Esta acción no se puede deshacer.', // Puedes agregar un mensaje adicional
-      buttons: this.alertButtons,
+      message: 'Esta acción no se puede deshacer.',
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+          handler: () => {
+            console.log('Alerta cancelada');
+          },
+        },
+        {
+          text: 'Sí',
+          role: 'confirm',
+          handler: async () => {
+            const loading = await this.utilSVC.loading();
+            await loading.present();
+            await this.firebase.signOut();
+            await loading.dismiss(); // Asegurarse de que el loader se cierra después de cerrar la sesión
+          },
+        },
+      ],
       backdropDismiss: false,
-      mode: 'ios' // Forzar el modo iOS
+      mode: 'ios'
     });
-
+  
     await alert.present();
     const { role } = await alert.onDidDismiss();
-    if(role=='confirm'){
-      const loading=await this.utilSVC.loading()
-      await loading.present()
-        this.firebase.signOut()
-        loading.dismiss()
-    }
-     
-    console.log(role)
-    this.setResult(new CustomEvent('dismiss', { detail: { role: role ?? 'unknown' } }));
+    console.log(`Dismissed with role: ${role}`);
   }
+  
 
   selectTab(event: Event) {
     const tabButtons = document.querySelectorAll('ion-tab-button');
