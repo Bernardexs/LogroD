@@ -5,6 +5,7 @@ import { UtilsService } from 'src/app/services/utils.service';
 import { Task } from 'src/app/models/task.model';
 import { AddUpdateTaskPage } from 'src/app/add-update-task/add-update-task.page';
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
+import { CalendarService } from 'src/app/services/calendar.service';
 
 @Component({
   selector: 'app-tareas-p',
@@ -26,6 +27,8 @@ export class TareasPPage implements OnInit {
     private utilSVC: UtilsService, 
     private firebase: FirebaseService,
     private modalController: ModalController,
+    private calendarService: CalendarService,
+
   ) {}
 
   ngOnInit() {
@@ -182,6 +185,14 @@ searchTasks(searchTerm: string) {
     await alert.present();
     const { role } = await alert.onDidDismiss();
     console.log(`Dismissed with role: ${role}`);
+  }
+
+  handleAuthClick() {
+    this.calendarService.handleAuthClick();
+  }
+
+  handleSignoutClick() {
+    this.calendarService.handleSignoutClick();
   }
   
 }

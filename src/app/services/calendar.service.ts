@@ -40,6 +40,12 @@ export class CalendarService {
       discoveryDocs: [this.DISCOVERY_DOC],
       scope: this.SCOPES,
     });
+  
+    const storedToken = localStorage.getItem('google_oauth_token');
+    if (storedToken) {
+      gapi.client.setToken(JSON.parse(storedToken)); // Set token
+    }
+  
     this.gapiInited = true;
     this.maybeEnableButtons();
   }
@@ -65,28 +71,32 @@ export class CalendarService {
       if (resp.error !== undefined) {
         throw (resp);
       }
+      localStorage.setItem('google_oauth_token', JSON.stringify(gapi.client.getToken())); // Store token
       document.getElementById('signout_button')!.style.visibility = 'visible';
       document.getElementById('authorize_button')!.innerText = 'Refresh';
       await this.listUpcomingEvents();
     };
-
+  
     if (gapi.client.getToken() === null) {
-      this.tokenClient.requestAccessToken({prompt: 'consent'});
+      this.tokenClient.requestAccessToken({ prompt: 'consent' });
     } else {
-      this.tokenClient.requestAccessToken({prompt: ''});
+      this.tokenClient.requestAccessToken({ prompt: '' });
     }
   }
+  
 
   public handleSignoutClick() {
     const token = gapi.client.getToken();
     if (token !== null) {
       google.accounts.oauth2.revoke(token.access_token);
       gapi.client.setToken('');
+      localStorage.removeItem('google_oauth_token'); // Remove token
       document.getElementById('content')!.innerText = '';
       document.getElementById('authorize_button')!.innerText = 'Authorize';
       document.getElementById('signout_button')!.style.visibility = 'hidden';
     }
   }
+  
 
   public async listUpcomingEvents(): Promise<any[]> {
     let response;

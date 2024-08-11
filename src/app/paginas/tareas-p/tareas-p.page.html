@@ -3,7 +3,10 @@
     <ion-title class="titulo">Tareas pendientes</ion-title>
   </ion-toolbar>
 </ion-header>
-
+<div class="calendar-buttons">
+  <ion-button id="authorize_button" (click)="handleAuthClick()">Authorize</ion-button>
+  <ion-button id="signout_button" (click)="handleSignoutClick()">Sign Out</ion-button>
+</div>
 <ion-content>
   <ion-list>
     <ion-item class="filtrar">
