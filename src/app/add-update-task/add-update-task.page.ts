@@ -5,6 +5,7 @@ import { Task } from '../models/task.model';
 import { FirebaseService } from '../services/firebase.service';
 import { UtilsService } from '../services/utils.service';
 import { User } from '../models/user.model';
+import { CalendarService } from '../services/calendar.service';
 
 @Component({
   selector: 'app-add-update-task',
@@ -22,7 +23,9 @@ export class AddUpdateTaskPage implements OnInit {
     private modalController: ModalController,
     private navParams: NavParams,
     private firebase: FirebaseService,
-    private utilSVC: UtilsService
+    private utilSVC: UtilsService,
+    private calendarService: CalendarService,
+
   ) {
     this.task = this.navParams.get('task');
     const now = new Date();
@@ -78,8 +81,19 @@ export class AddUpdateTaskPage implements OnInit {
             } else {
                 // Crear nueva tarea
                 await this.firebase.addToSubcollection(`users/${this.user.uid}`, 'tasks', taskData);
-
-                // Mostrar mensaje de éxito
+                const event = {
+                  summary: taskData.title,
+                  description: taskData.description,
+                  start: {
+                      dateTime: taskData.startTime, // Asegúrate de que `startTime` esté en formato ISO
+                      timeZone: 'America/Los_Angeles', // O la zona horaria que sea relevante para ti
+                  },
+                  end: {
+                      dateTime: taskData.endTime, // Asegúrate de que `endTime` esté en formato ISO
+                      timeZone: 'America/Los_Angeles',
+                  },
+              };
+              await this.calendarService.insertEvent(event);                // Mostrar mensaje de éxito
                 this.utilSVC.presentToast({
                     message: 'Tarea creada exitosamente',
                     color: 'success',
