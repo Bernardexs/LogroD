@@ -1,9 +1,4 @@
-ion-footer.fixed-footer {
-  position: sticky;
-  bottom: 0;
-  width: 100%;
-}
-
+/* Estilo para la barra de herramientas y título */
 ion-header {
   --background: #fff;
   --color: #000;
@@ -12,80 +7,80 @@ ion-header {
 .titulo {
   font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
   font-size: 25px;
+  text-align: center; /* Centrar el título */
 }
 
-.filtrar {
-  margin-top: 10px;
+.calendar-buttons {
+  display: flex;
+  justify-content: space-between; /* Espaciado entre botones */
+  padding: 10px; /* Espaciado interno */
 }
 
-ion-toolbar {
-  --background: #fff;
-  --color: #000;
-  border-bottom: 1px solid var(--border-color);
+/* Botones de autorización y desconexión con mejor estilo */
+.calendar-buttons ion-button {
+  --background: radial-gradient(
+    100% 100% at 100% 0%,
+    #89e5ff 0%,
+    #7885e2 100%
+  ); /* Fondo transparente */
+  --border-radius: 20px; /* Bordes redondeados */
+  --color: #ffffff; /* Texto blanco */
+  font-size: 14px; /* Tamaño de fuente adecuado */
+  padding: 10px 20px; /* Espaciado interno */
+  border: 1px solid #ffffff; /* Borde blanco */
 }
 
-.BuscarT {
-  margin: 20px;
+.filtro ion-button {
+  --background: #7885e2; /* Fondo transparente */
+  --border-radius: 20px; /* Bordes redondeados */
+  // --color: #000000; /* Texto blanco */
+  font-size: 14px; /* Tamaño de fuente adecuado */
+  padding: 10px 20px; /* Espaciado interno */
+  border: 1px solid #fff; /* Borde blanco */
+  margin: 0;
+}
+
+.calendar-buttons {
+  text-align: right;
+  font-size: 15px;
+}
+
+.BuscarT,
+.filtro {
+  margin: auto; /* Centra los elementos horizontalmente con margen arriba y abajo */
   --background: #f3f5f7;
   --border-radius: 10px;
-  width: calc(100% - 40px);
+  width: calc(
+    100% - 40px
+  ); /* Calcula el ancho como el 100% del contenedor menos 40px */
   --color: #000;
   --placeholder-color: #888;
 }
 
-.tasks-list {
+.filtro {
+  // margin: 0;
+  width: 80%;
+}
+
+/* Estilo para las tareas */
+.listatarea {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-.task-item {
-  --background: #ffffff;
-  --border-radius: 10px;
-  margin: 10px 0;
-  width: 90%;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s;
-}
-
-/* Estilo para cuando el ion-item está seleccionado */
-ion-item::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  background-color: #c7d2fe;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-ion-item[selected]::after {
-  opacity: 1;
-  transition: opacity 0.3s ease;
-  animation: fadeOut 0.3s forwards 0.3s;
-}
-
-@keyframes fadeOut {
-  to {
-    opacity: 0;
-  }
-}
-
-ion-item:hover {
-  --background: #dce1f3; /* Color celeste claro cuando se pasa el mouse */
-}
-
-ion-list {
-  padding: 0;
+.tareas {
   display: flex;
-  flex-direction: column;
-  align-items: center; /* Centrar los elementos de la lista */
+  width: 90%;
+  // max-width: 600px; /* Limita el ancho máximo para que no sea tan ancho */
+  padding: 5px;
+  box-shadow: 0 2px 4px rgba(0.2, 0.2, 0.2, 0.2);
+  margin: 5px;
+  justify-content: space-between; /* Para asegurar que los elementos se distribuyan correctamente */
 }
 
-ion-item:last-child {
-  border-bottom: none;
+.no_tarea {
+  width: 100%;
 }
 
 ion-label h2 {
@@ -98,8 +93,9 @@ ion-label p {
   color: #888;
 }
 
+/* Estilo para el botón flotante */
 ion-fab {
-  margin: 16px; /* Agrega un margen para separar el botón de las esquinas */
+  margin: 16px;
 }
 
 ion-fab-button {
@@ -107,53 +103,27 @@ ion-fab-button {
   --color: #fff;
 }
 
+/* Estilo para la barra de pestañas */
 ion-tab-bar {
-  --background: #000; /* Color oscuro para el fondo de la barra de pestañas */
-  --color: #ffffff; /* Color de los iconos por defecto */
+  --background: #000;
+  --color: #ffffff;
   font-size: 35px;
 }
 
 ion-tab-button {
-  --color: #adb5bd; /* Color de los iconos cuando no están seleccionados */
-  --color-selected: #ffffff; /* Color de los iconos cuando están seleccionados */
-  --background: transparent; /* Fondo transparente para los botones */
-  transition: background-color 0.3s ease, color 0.3s ease; /* Animaciones suaves */
+  --color: #adb5bd;
+  --color-selected: #ffffff;
+  --background: transparent;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 ion-tab-button:hover {
-  --color: #ffffff; /* Color blanco cuando se pasa el mouse por encima */
-  --background: rgba(
-    255,
-    255,
-    255,
-    0.1
-  ); /* Fondo más claro cuando se pasa el mouse por encima */
-}
-
-ion-tab-button[tab="tareas"] {
-  --color: #adb5bd; /* Color pastel para el icono de tareas */
-}
-
-ion-tab-button[tab="calendario"] {
-  --color: #adb5bd; /* Color pastel para el icono de calendario */
-}
-
-ion-tab-button[tab="menu"] {
-  --color: #adb5bd; /* Color pastel para el icono de menú */
-}
-
-ion-tab-button.selected {
-  --background: rgba(
-    255,
-    255,
-    255,
-    0.2
-  ); /* Fondo más claro cuando el botón está seleccionado */
-  --color: #ffffff; /* Color blanco cuando el botón está seleccionado */
+  --color: #ffffff;
+  --background: rgba(255, 255, 255, 0.1);
 }
 
 ion-tab-button.animated {
-  animation: pulse 1s infinite; /* Animación de pulsación */
+  animation: pulse 1s infinite;
 }
 
 @keyframes pulse {
@@ -162,88 +132,94 @@ ion-tab-button.animated {
   }
   50% {
     transform: scale(1.05);
-    --color: #ffffff; /* Color blanco durante la pulsación */
+    --color: #ffffff;
   }
   100% {
     transform: scale(1);
   }
 }
 
-/* Ajustes del popover */
-ion-popover {
-  --width: 300px; /* Ajusta este valor según tus necesidades */
+/* Estilo para el popover */
+ion-popover .popover-content {
+  --width: 200px;
 }
 
 .custom-popover ion-item {
-  --min-height: 44px; /* Ajusta este valor según tus necesidades */
-  white-space: nowrap; /* Evita que las palabras se vayan hacia abajo */
+  --min-height: 44px;
+  white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
+  --padding-start: 15px;
+  --padding-end: 15px;
 }
 
-ion-popover ion-icon {
-  --color: #000; /* Asegura que los iconos dentro del popover sean visibles */
+/* Asegura que todos los ítems estén alineados */
+.custom-popover ion-item ion-icon {
+  --margin-end: 10px;
+  --color: #000;
 }
 
+/* Media queries para pantallas más grandes */
 @media screen and (min-width: 1024px) {
   ion-toolbar {
-    padding: 0 20px; /* Más espacio en los lados */
+    padding: 0 20px;
   }
 
   .titulo {
-    font-size: 30px; /* Tamaño de fuente más grande para títulos */
+    font-size: 30px;
   }
 
-  .BuscarT {
-    margin: 2% auto; /* Centrar la barra de búsqueda */
-    width: 50%; /* Hacerla más ancha */
+  .BuscarT,
+  .filtro {
+    margin: 1% auto;
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 
-  ion-item {
-    width: 80%; /* Más ancho para elementos de lista */
-    padding: 10px; /* Más espacio interno */
+  /* Estilo para las tareas */
+  .listatarea {
+    display: flex;
+    // flex-direction: column;
+    align-items: center;
+  }
+
+  .tareas {
+    display: flex;
+    width: 90%;
+    // max-width: 600px; /* Limita el ancho máximo para que no sea tan ancho */
+    padding: 5px;
+    box-shadow: 0 2px 4px rgba(0.2, 0.2, 0.2, 0.2);
+    margin: 5px;
+    justify-content: space-between; /* Para asegurar que los elementos se distribuyan correctamente */
   }
 
   ion-label h2 {
-    font-size: 18px; /* Tamaño de fuente más grande para títulos de tareas */
+    font-size: 18px;
   }
 
   ion-label p {
-    font-size: 14px; /* Tamaño de fuente más grande para detalles de tareas */
+    font-size: 14px;
   }
 
   .add {
-    margin-right: 30px; /* Aumenta el margen para pantallas grandes */
+    margin-right: 30px;
   }
 
   ion-fab-button {
-    --background: linear-gradient(
-      to right,
-      #2b31d2,
-      #344ce5
-    ); /* Gradiente para el botón flotante */
+    --background: linear-gradient(to right, #2b31d2, #344ce5);
   }
 
   ion-tab-bar {
-    font-size: 20px; /* Tamaño de fuente más grande para las pestañas */
+    font-size: 20px;
   }
 
   ion-tab-button {
-    --icon-size: 24px; /* Ajuste del tamaño de los íconos */
+    --icon-size: 24px;
   }
 
   ion-icon {
-    font-size: 32px; /* Tamaño más grande para los íconos */
-  }
-
-  ion-popover .popover-content {
-    --width: 200px; /* Ajusta este valor según tus necesidades */
-  }
-
-  .custom-popover ion-item {
-    --min-height: 44px; /* Ajusta este valor según tus necesidades */
-    white-space: nowrap; /* Evita que las palabras se vayan hacia abajo */
-    text-overflow: ellipsis;
-    overflow: hidden;
+    font-size: 32px;
   }
 }

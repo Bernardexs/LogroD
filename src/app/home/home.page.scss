@@ -1,9 +1,3 @@
-ion-footer.fixed-footer {
-  position: sticky;
-  bottom: 0;
-  width: 100%;
-}
-
 ion-header {
   --background: #fff;
   --color: #000;
@@ -14,21 +8,15 @@ ion-header {
   font-size: 25px;
 }
 
-ion-toolbar {
-  --background: #fff;
-  --color: #000;
-}
-
-.logout-button {
-  display: flex;
-  justify-content: flex-end;
-  padding: 10px;
-}
-
 .calendar-buttons {
   display: flex;
   justify-content: center;
   margin: 20px 0;
+}
+
+ion-toolbar {
+  --background: #fff;
+  --color: #000;
 }
 
 .calendar-header {
@@ -44,115 +32,74 @@ ion-toolbar {
 }
 
 ion-tab-bar {
-  --background: #000; /* Color oscuro para el fondo de la barra de pestañas */
-  --color: #ffffff; /* Color de los iconos por defecto */
+  --background: #000; /* Fondo oscuro para la barra de pestañas */
+  --color: #ffffff; /* Color de los iconos */
   font-size: 35px;
 }
 
 ion-tab-button {
-  --color: #adb5bd; /* Color de los iconos cuando no están seleccionados */
-  --color-selected: #ffffff; /* Color de los iconos cuando están seleccionados */
-  --background: transparent; /* Fondo transparente para los botones */
-  transition: background-color 0.3s ease, color 0.3s ease; /* Animaciones suaves */
+  --color: #adb5bd; /* Color de los iconos no seleccionados */
+  --color-selected: #ffffff; /* Color de los iconos seleccionados */
+  --background: transparent;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 ion-tab-button:hover {
-  --color: #ffffff; /* Color blanco cuando se pasa el mouse por encima */
-  --background: rgba(255, 255, 255, 0.1); /* Fondo más claro cuando se pasa el mouse por encima */
-}
-
-ion-tab-button[tab="tareas"] {
-  --color: #ffffff; /* Color pastel para el icono de tareas */
-}
-
-ion-tab-button[tab="calendario"] {
-  --color: #ffffff; /* Color pastel para el icono de calendario */
-}
-
-ion-tab-button[tab="menu"] {
-  --color: #ffffff; /* Color pastel para el icono de menú */
+  --color: #ffffff;
+  --background: rgba(255, 255, 255, 0.1);
 }
 
 ion-tab-button.selected {
-  --background: rgba(255, 255, 255, 0.2); /* Fondo más claro cuando el botón está seleccionado */
-  --color: #ffffff; /* Color blanco cuando el botón está seleccionado */
+  --background: rgba(255, 255, 255, 0.2);
+  --color: #ffffff;
 }
 
-ion-tab-button.animated {
-  animation: pulse 1s infinite; /* Animación de pulsación */
-}
-
-@keyframes pulse {
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.05);
-    --color: #ffffff; /* Color blanco durante la pulsación */
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-
-/* Ajustes del popover */
-ion-popover {
-  --width: 300px; /* Ajusta este valor según tus necesidades */
+/* Estilo para el popover */
+ion-popover .popover-content {
+  --width: 200px; 
 }
 
 .custom-popover ion-item {
-  --min-height: 44px; /* Ajusta este valor según tus necesidades */
-  white-space: nowrap; /* Evita que las palabras se vayan hacia abajo */
+  --min-height: 44px;
+  white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
+  --padding-start: 15px;
+  --padding-end: 15px;
+}
+
+/* Asegura que todos los ítems estén alineados */
+.custom-popover ion-item ion-icon {
+  --margin-end: 10px;
+  --color: #000;
 }
 
 @media screen and (min-width: 1024px) {
-  ion-popover .popover-content {
-    --width: 200px; /* Ajusta este valor según tus necesidades */
-  }
+
 
   .custom-popover ion-item {
-    --min-height: 44px; /* Ajusta este valor según tus necesidades */
-    white-space: nowrap; /* Evita que las palabras se vayan hacia abajo */
-    text-overflow: ellipsis;
-    overflow: hidden;
+    --min-height: 44px;
   }
 
   ion-tab-bar {
-    font-size: 20px; /* Tamaño de fuente más grande para las pestañas */
+    font-size: 20px;
   }
 
-  ion-item {
-    width: 80%; /* Más ancho para elementos de lista */
-    padding: 10px; /* Más espacio interno */
-  }
+
 
   ion-toolbar {
-    padding: 0 20px; /* Más espacio en los lados */
+    padding: 0 20px;
   }
 
   .titulo {
-    font-size: 30px; /* Tamaño de fuente más grande para títulos */
+    font-size: 30px;
   }
 
   ion-tab-button {
-    --icon-size: 24px; /* Ajuste del tamaño de los íconos */
+    --icon-size: 24px;
   }
 
   ion-icon {
-    font-size: 32px; /* Tamaño más grande para los íconos */
-  }
-
-  
-  ion-tab-button[tab="tareas"] {
-    --color: #adb5bd; /* Color pastel para el icono de calendario */  }
-  
-  ion-tab-button[tab="calendario"] {
-    --color: #adb5bd; /* Color pastel para el icono de calendario */
-  }
-  
-  ion-tab-button[tab="menu"] {
-    --color: #adb5bd; /* Color pastel para el icono de menú */
+    font-size: 32px;
   }
 }

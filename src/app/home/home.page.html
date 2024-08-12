@@ -14,26 +14,34 @@
 </ion-header>
 
 <ion-content>
- 
-
   <div class="calendar-buttons">
-    <ion-button id="authorize_button" (click)="handleAuthClick()">Authorize</ion-button>
-    <ion-button id="signout_button" (click)="handleSignoutClick()">Sign Out</ion-button>
+    <ion-button id="authorize_button" (click)="handleAuthClick()"
+      >Authorize</ion-button
+    >
+    <ion-button id="signout_button" (click)="handleSignoutClick()"
+      >Sign Out</ion-button
+    >
   </div>
-  <pre id="content" style="white-space: pre-wrap;"></pre>
+  <pre id="content" style="white-space: pre-wrap"></pre>
 
   <ion-list>
     <ion-item *ngFor="let task of tasks">
       <ion-label>
         <h2>{{ task.title }}</h2>
         <p>{{ task.description }}</p>
-        <p>{{ task.startTime | date: 'short' }} - {{ task.endTime | date: 'short' }}</p>
+        <p>
+          {{ task.startTime | date: 'short' }} - {{ task.endTime | date: 'short'
+          }}
+        </p>
       </ion-label>
       <ion-buttons slot="end">
         <ion-button (click)="addOrUpdateTask(task)">Editar</ion-button>
-        <ion-button color="danger" (click)="deleteTask(task.id)">Eliminar</ion-button>
+        <ion-button color="danger" (click)="deleteTask(task.id)"
+          >Eliminar</ion-button
+        >
         <ion-button color="success" (click)="markAsCompleted(task)">
-          {{ task.completed ? 'Marcar como No Completada' : 'Marcar como Completada' }}
+          {{ task.completed ? 'Marcar como No Completada' : 'Marcar como
+          Completada' }}
         </ion-button>
       </ion-buttons>
     </ion-item>
@@ -56,7 +64,8 @@
     (onCurrentDateChanged)="onCurrentDateChanged($event)"
     (onEventSelected)="onEventSelected($event)"
     (onTitleChanged)="onViewTitleChanged($event)"
-    [step]="30">
+    [step]="30"
+  >
   </calendar>
 </ion-content>
 
@@ -71,7 +80,7 @@
     </ion-tab-button>
 
     <ion-tab-button tab="menu" id="popover-button">
-      <ion-icon  name="menu-outline"></ion-icon>
+      <ion-icon name="menu-outline"></ion-icon>
       <ion-popover trigger="popover-button" [dismissOnSelect]="true">
         <ng-template>
           <ion-content>
@@ -88,7 +97,6 @@
                 <ion-icon name="log-out-outline" slot="start"></ion-icon>
                 <ion-label>Cerrar Sesión</ion-label>
               </ion-item>
-
             </ion-list>
           </ion-content>
         </ng-template>

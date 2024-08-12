@@ -3,12 +3,16 @@
     <ion-title class="titulo">Tareas pendientes</ion-title>
   </ion-toolbar>
 </ion-header>
-<div class="calendar-buttons">
-  <ion-button id="authorize_button" (click)="handleAuthClick()">Authorize</ion-button>
-  <ion-button id="signout_button" (click)="handleSignoutClick()">Sign Out</ion-button>
-</div>
+
+
+
 <ion-content>
-  <ion-list>
+  <div class="calendar-buttons">
+    <ion-button class="autorizacion" id="authorize_button" (click)="handleAuthClick()">Authorización</ion-button>
+    <ion-button class="desconectar"  id="signout_button" (click)="handleSignoutClick()">Desconectar</ion-button>
+  </div>
+
+  <ion-list class="filtro" >
     <ion-item class="filtrar">
       <ion-select 
         slot="start" 
@@ -31,8 +35,8 @@
     placeholder="Buscar tarea">
   </ion-searchbar>
   
-  <ion-list>
-    <ion-item *ngFor="let task of filteredTasks">
+  <ion-list class="listatarea">
+    <ion-item class="tareas" *ngFor="let task of filteredTasks">
       <ion-checkbox 
         slot="start" 
         [checked]="task.completed" 
@@ -62,7 +66,7 @@
       </ion-button>
     </ion-item>
     <ion-item *ngIf="filteredTasks.length === 0">
-      <ion-label>No hay tareas para mostrar</ion-label>
+      <ion-label class="no_tarea">No hay tareas para mostrar</ion-label>
     </ion-item>
   </ion-list>
 
@@ -86,8 +90,8 @@
       <ion-icon  name="menu-outline"></ion-icon>
       <ion-popover trigger="popover-buttonn" [dismissOnSelect]="true">
         <ng-template>
-          <ion-content>
-            <ion-list>
+          <ion-content >
+            <ion-list >
               <ion-item button>
                 <ion-icon name="notifications-outline" slot="start"></ion-icon>
                 <ion-label>Notificaciones</ion-label>
