@@ -186,7 +186,7 @@ export class HomePage implements OnInit {
     let datos = this.allEvents.map(event => {
       return {
         ...event,
-        title: `🔔 ${event.title} | ${event.description} | ${event.completed ? '✅ Aprobado' : 'En Espera'}`, // Agregar un icono o modificar el título
+        title: `🔔 ${event.title} | ${event.description} | ${event.completed ? '✅ Completada' : 'En Espera'}`, // Agregar un icono o modificar el título
         startTime: new Date(event.startTime),
         endTime: new Date(event.endTime),
         allDay: false,
