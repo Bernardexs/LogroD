@@ -1,5 +1,16 @@
 {
   "projects": {
     "default": "calendar-7e9fc"
-  }
+  },
+  "targets": {
+    "calendar-7e9fc": {
+      "hosting": {
+        "default": [
+          "default"
+        ]
+      }
+    }
+  },
+  "etags": {},
+  "dataconnectEmulatorConfig": {}
 }

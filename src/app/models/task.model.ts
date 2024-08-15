@@ -5,5 +5,6 @@ export interface Task {
   startTime: Date;
   endTime: Date;
   completed: boolean;
-  category?: string; // Hacer que category sea opcional y permita undefined
+  category?: string;
+  eventId?: string; // Hacer que category sea opcional y permita undefined
 }

@@ -15,37 +15,13 @@
 
 <ion-content>
   <div class="calendar-buttons">
-    <ion-button id="authorize_button" (click)="handleAuthClick()"
-      >Authorize</ion-button
-    >
-    <ion-button id="signout_button" (click)="handleSignoutClick()"
-      >Sign Out</ion-button
-    >
+    <ion-button id="authorize_button" (click)="tokenGoogle ? cambiarCuenta() : handleAuthClick()"
+      >{{tokenGoogle ? 'Actualizar' : 'Google Calendar'}}</ion-button>
+    <!-- <ion-button id="signout_button" (click)="handleSignoutClick()"
+      >Sign Out</ion-button -->
   </div>
+  
   <pre id="content" style="white-space: pre-wrap"></pre>
-
-  <ion-list>
-    <ion-item *ngFor="let task of tasks">
-      <ion-label>
-        <h2>{{ task.title }}</h2>
-        <p>{{ task.description }}</p>
-        <p>
-          {{ task.startTime | date: 'short' }} - {{ task.endTime | date: 'short'
-          }}
-        </p>
-      </ion-label>
-      <ion-buttons slot="end">
-        <ion-button (click)="addOrUpdateTask(task)">Editar</ion-button>
-        <ion-button color="danger" (click)="deleteTask(task.id)"
-          >Eliminar</ion-button
-        >
-        <ion-button color="success" (click)="markAsCompleted(task)">
-          {{ task.completed ? 'Marcar como No Completada' : 'Marcar como
-          Completada' }}
-        </ion-button>
-      </ion-buttons>
-    </ion-item>
-  </ion-list>
 
   <div class="calendar-header">
     <ion-button fill="clear" (click)="back()">
@@ -55,6 +31,14 @@
     <ion-button fill="clear" (click)="next()">
       <ion-icon name="arrow-forward-outline"></ion-icon>
     </ion-button>
+  </div>
+  <div class="calendar-buttons">
+    <!-- <ion-button [disabled]="isToday" (click)="today()">Today</ion-button> -->
+    <ion-button (click)="changeMode('month')">Mes</ion-button>
+    <ion-button (click)="changeMode('week')">Semana</ion-button>
+    <ion-button (click)="changeMode('day')">Día</ion-button>
+    <!-- <ion-button (click)="enviarNotifi()">Enviar Notificación</ion-button> -->
+    <!-- <ion-button (click)="loadEvents()">Load</ion-button> -->
   </div>
 
   <calendar
@@ -85,11 +69,11 @@
         <ng-template>
           <ion-content>
             <ion-list>
-              <ion-item button>
+              <ion-item button (click)="navegar()">
                 <ion-icon name="notifications-outline" slot="start"></ion-icon>
                 <ion-label>Notificaciones</ion-label>
               </ion-item>
-              <ion-item button>
+              <ion-item button (click)="navegarPro()" button>
                 <ion-icon name="bar-chart-outline" slot="start"></ion-icon>
                 <ion-label>Productividad</ion-label>
               </ion-item>

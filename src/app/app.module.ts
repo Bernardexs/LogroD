@@ -9,16 +9,27 @@ import { AppRoutingModule } from './app-routing.module';
 
 //======firebase======
 
-import {AngularFireModule} from '@angular/fire/compat'
+import { AngularFireModule } from '@angular/fire/compat'
 import { environment } from 'src/environments/environment';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgCircleProgressModule } from 'ng-circle-progress';
 import { NgCalendarModule } from 'ionic2-calendar';
-
+import { SETTINGS } from '@angular/fire/compat/auth';
+import { AngularFireMessagingModule } from '@angular/fire/compat/messaging';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { CommonModule, registerLocaleData } from '@angular/common';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import localeEs from '@angular/common/locales/es';
+registerLocaleData(localeEs, 'es');
 @NgModule({
   declarations: [AppComponent],
-  imports: [BrowserModule, IonicModule.forRoot({mode:'md'}), AppRoutingModule,
-    AngularFireModule.initializeApp(environment.firebaseConfig),ReactiveFormsModule,NgCalendarModule,FormsModule,
+  imports: [BrowserModule,BrowserAnimationsModule,CommonModule, IonicModule.forRoot({ mode: 'md' }), AppRoutingModule,
+    AngularFireModule.initializeApp(environment.firebaseConfig), 
+    ReactiveFormsModule, 
+    NgCalendarModule, 
+    FormsModule,
+    HttpClientModule,
+    AngularFireMessagingModule,
     NgCircleProgressModule.forRoot({
       // set defaults here
       radius: 100,
@@ -28,11 +39,11 @@ import { NgCalendarModule } from 'ionic2-calendar';
       innerStrokeColor: "#C7E596",
       animationDuration: 300,
     })
-  ],exports:[
+  ], exports: [
     NgCalendarModule,
-    NgCircleProgressModule   
+    NgCircleProgressModule
   ],
-  providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],
+  providers: [{ provide: { RouteReuseStrategy, SETTINGS }, useValue: [{ persistence: true},'es'], useClass: IonicRouteStrategy }],
   bootstrap: [AppComponent],
 })
-export class AppModule {}
+export class AppModule { }

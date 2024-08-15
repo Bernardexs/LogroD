@@ -5,10 +5,13 @@ import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, up
 import { User } from '../models/user.model';
 import { Task } from '../models/task.model';
 import { UtilsService } from './utils.service';
-import { Observable } from 'rxjs';
+import { mergeMapTo, Observable, Subject } from 'rxjs';
 import firebase from 'firebase/compat/app';
 import { Router } from '@angular/router';
 import { getFirestore, setDoc, doc, getDoc } from '@angular/fire/firestore';
+import { AlertController } from '@ionic/angular';
+import { AngularFireMessaging } from '@angular/fire/compat/messaging';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 declare var google: any;
 declare var gapi: any;
@@ -25,14 +28,30 @@ export class FirebaseService {
   firestore = inject(AngularFirestore);
   utilService = inject(UtilsService);
   router = inject(Router);
+afMessaging = inject(AngularFireMessaging)
   private provider: FacebookAuthProvider;
 
   private tokenClient: any;
   private gapiInited = false;
   private gisInited = false;
 
-  constructor() {
+  private offline = new Subject<boolean>();
+
+  // Observable para que el componente se suscriba
+  offlineLoaded$ = this.offline.asObservable();
+
+  constructor(private http: HttpClient) {
     this.provider = new FacebookAuthProvider();
+    this.initializeNetworkEvents();
+    this.requestPermission();
+  }
+
+  requestPermission(){
+    this.afMessaging.requestPermission.pipe(mergeMapTo(this.afMessaging.tokenChanges))
+     .subscribe((token:any) => {
+      localStorage.setItem('tokenPush',token)
+        console.log('Permission granted!',token);
+      })
   }
 
   async getCalendarEvents() {
@@ -68,11 +87,11 @@ export class FirebaseService {
       description: task.description,
       start: {
         dateTime: startTime,
-        timeZone: 'America/Los_Angeles'
+        timeZone: 'America/Bogota'
       },
       end: {
         dateTime: endTime,
-        timeZone: 'America/Los_Angeles'
+        timeZone: 'America/Bogota'
       },
     };
 
@@ -135,6 +154,7 @@ export class FirebaseService {
   async signOut() {
     const auth = getAuth();
     await auth.signOut();
+    localStorage.removeItem('google_oauth_token');
     localStorage.removeItem('user');
     this.utilService.routerLink('/bienvenida');
   }
@@ -296,15 +316,24 @@ export class FirebaseService {
   searchTasksByTitle(path: string, searchTerm: string, selectedCategory?: string): Observable<Task[]> {
     return this.firestore.collection<Task>(`${path}/tasks`, ref => {
       let query: Query = ref;
+      console.log(query)
+      // Filtrar por categoría si está definida y no es 'Todos'
       if (selectedCategory && selectedCategory !== 'Todos') {
         query = query.where('category', '==', selectedCategory);
       }
+  
+      console.log(query)
+      // Filtrar por título si está definido
       if (searchTerm) {
         query = query.where('title', '>=', searchTerm).where('title', '<=', searchTerm + '\uf8ff');
       }
+
+      console.log(query)
+  
       return query;
     }).valueChanges({ idField: 'id' });
   }
+  
 
   addToSubcollection(path: string, subcollectionName: string, object: any) {
     const collectionPath = `${path}/${subcollectionName}`;
@@ -318,4 +347,48 @@ export class FirebaseService {
   deleteDocument(path: string) {
     return this.firestore.doc(path).delete();
   }
+
+  private initializeNetworkEvents() {
+    window.addEventListener('online', () => this.handleConnectionChange(true));
+    window.addEventListener('offline', () => this.handleConnectionChange(false));
+  }
+
+  async handleConnectionChange(isOnline: boolean) {
+    if (isOnline) {
+      console.log('Back online');
+      this.syncData();
+    } else {
+      this.offline.next(true);
+      console.log('You are offline');
+    }
+  }
+
+  private async syncData() {
+    // Aquí se implementa la lógica para sincronizar datos
+    console.log('Sincronizando datos...');
+  }
+
+
+  private readonly apiUrl = 'https://fcm.googleapis.com/v1/projects/548073834016/messages:send';
+  private readonly serverKey = 'AIzaSyCbwvYbyo_8_ZFVzspr2owyy4rSja5zkE0';
+
+  sendNotification(token: string | null, title: string, body: string) {
+    const message = {
+      message: {
+        token: token,
+        notification: {
+          title: title,
+          body: body
+        }
+      }
+    };
+
+    const headers = new HttpHeaders({
+      'Authorization': `key=${this.serverKey}`,
+      'Content-Type': 'application/json'
+    });
+
+    return this.http.post(this.apiUrl, message, { headers });
+  }
+
 }

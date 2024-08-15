@@ -35,7 +35,7 @@ export class AddUpdateTaskPage implements OnInit {
       description: [this.task?.description || '', [Validators.required, Validators.minLength(10)]],
       startTime: [this.task?.startTime || now.toISOString(), Validators.required],
       endTime: [this.task?.endTime || new Date(now.getTime() + 60 * 1000).toISOString(), Validators.required], // 1 minuto después por defecto
-      category: [this.task?.category || '', Validators.required] 
+      category: [this.task?.category || '', Validators.required]
     }, {
       validators: this.endTimeAfterStartTimeValidator // Validación personalizada
     });
@@ -55,78 +55,106 @@ export class AddUpdateTaskPage implements OnInit {
     return (endTime > startTime + 60000) ? null : { endTimeBeforeMinInterval: true }; // 60000 ms = 1 minuto
   }
 
+
   async save() {
     if (this.form.valid) {
-        const formValue = this.form.value;
-        const taskData: Task = {
-            ...formValue, // Incluye title, description, startTime, endTime, y category
-            completed: this.task?.completed || false // Mantener el estado de completado
-        };
+      const formValue = this.form.value;
+      const taskData: Task = {
+        ...formValue, // Incluye title, description, startTime, endTime, y category
+        completed: this.task?.completed || false // Mantener el estado de completado
+      };
 
-        this.utilSVC.loading(); // Mostrar indicador de carga
+      this.utilSVC.loading(); // Mostrar indicador de carga
 
-        try {
-            if (this.task && this.task.id) {
-                // Actualizar tarea existente
-                const taskPath = `users/${this.user.uid}/tasks/${this.task.id}`;
-                await this.firebase.updateDocument(taskPath, taskData);
+      try {
+        if (this.task && this.task.id) {
+          // Actualizar tarea existente
+          const event = {
+            summary: taskData.title,
+            description: taskData.description,
+            start: {
+              dateTime: taskData.startTime, // Asegúrate de que `startTime` esté en formato ISO
+              timeZone: 'America/Bogota', // O la zona horaria que sea relevante para ti
+            },
+            end: {
+              dateTime: taskData.endTime, // Asegúrate de que `endTime` esté en formato ISO
+              timeZone: 'America/Bogota',
+            },
+          };
+          let tokenGoogle = localStorage.getItem('google_oauth_token') ? true : false;
+          if (tokenGoogle) {
+            const eventId = this.task.eventId;
+            await this.calendarService.updateEvent(eventId, event)
+          }
+          const taskPath = `users/${this.user.uid}/tasks/${this.task.id}`;
+          await this.firebase.updateDocument(taskPath, taskData);
 
-                // Mostrar mensaje de éxito
-                this.utilSVC.presentToast({
-                    message: 'Tarea actualizada exitosamente',
-                    color: 'success',
-                    icon: 'checkmark-circle-outline',
-                    duration: 1500
-                });
-            } else {
-                // Crear nueva tarea
-                await this.firebase.addToSubcollection(`users/${this.user.uid}`, 'tasks', taskData);
-                const event = {
-                  summary: taskData.title,
-                  description: taskData.description,
-                  start: {
-                      dateTime: taskData.startTime, // Asegúrate de que `startTime` esté en formato ISO
-                      timeZone: 'America/Los_Angeles', // O la zona horaria que sea relevante para ti
-                  },
-                  end: {
-                      dateTime: taskData.endTime, // Asegúrate de que `endTime` esté en formato ISO
-                      timeZone: 'America/Los_Angeles',
-                  },
-              };
-              await this.calendarService.insertEvent(event);                // Mostrar mensaje de éxito
-                this.utilSVC.presentToast({
-                    message: 'Tarea creada exitosamente',
-                    color: 'success',
-                    icon: 'checkmark-circle-outline',
-                    duration: 1500
-                });
+          // Mostrar mensaje de éxito
+          this.utilSVC.presentToast({
+            message: 'Tarea actualizada exitosamente',
+            color: 'success',
+            icon: 'checkmark-circle-outline',
+            duration: 1500
+          });
+          this.utilSVC.addNotification('Se actualizó un evento','Se ha actualizado un evento en tu calendario','assets/icon.png');
+        } else {
+          // Crear nueva tarea
+          const event = {
+            summary: taskData.title,
+            description: taskData.description,
+            start: {
+              dateTime: taskData.startTime, // Asegúrate de que `startTime` esté en formato ISO
+              timeZone: 'America/Bogota', // O la zona horaria que sea relevante para ti
+            },
+            end: {
+              dateTime: taskData.endTime, // Asegúrate de que `endTime` esté en formato ISO
+              timeZone: 'America/Bogota',
+            },
+          };
+          let tokenGoogle = localStorage.getItem('google_oauth_token') ? true : false;
+          if (tokenGoogle) {
+            let datos = await this.calendarService.insertEvent(event);
+            if (datos) {
+              taskData.eventId = datos.id; // Asignar el ID de evento al objeto tarea
             }
+          }
 
-            // Emitir un evento con los datos de la tarea creada/actualizada, incluyendo la categoría
-            await this.modalController.dismiss(this.form.value);
+          await this.firebase.addToSubcollection(`users/${this.user.uid}`, 'tasks', taskData);               // Mostrar mensaje de éxito
+          this.utilSVC.presentToast({
+            message: 'Tarea creada exitosamente',
+            color: 'success',
+            icon: 'checkmark-circle-outline',
+            duration: 1500
+          });
+          this.utilSVC.addNotification('Se creo un nuevo evento','Se ha creado un nuevo evento en tu calendario','assets/icon.png');
 
-        } catch (error) {
-            // Mostrar mensaje de error
-            this.utilSVC.presentToast({
-                message: String(error), // Convertir el error a string
-                color: 'warning',
-                icon: 'alert-circle-outline',
-                duration: 5000
-            });
-
-        } finally {
-            this.utilSVC.dismissLoading(); // Ocultar indicador de carga
         }
+
+        // Emitir un evento con los datos de la tarea creada/actualizada, incluyendo la categoría
+        await this.modalController.dismiss(this.form.value);
+
+      } catch (error) {
+        // Mostrar mensaje de error
+        this.utilSVC.presentToast({
+          message: String(error), // Convertir el error a string
+          color: 'warning',
+          icon: 'alert-circle-outline',
+          duration: 5000
+        });
+
+      } finally {
+        this.utilSVC.dismissLoading(); // Ocultar indicador de carga
+      }
     } else {
-        // Mostrar mensaje de error si la validación falla
-        if (this.form.hasError('endTimeBeforeMinInterval')) {
-            this.utilSVC.presentToast({
-                message: 'La fecha de fin debe ser al menos un minuto después de la fecha de inicio.',
-                color: 'danger',
-                icon: 'alert-circle-outline',
-                duration: 3000
-            });
-        }
+      // Mostrar mensaje de error si la validación falla
+      if (this.form.hasError('endTimeBeforeMinInterval')) {
+        this.utilSVC.presentToast({
+          message: 'La fecha de fin debe ser al menos un minuto después de la fecha de inicio.',
+          color: 'danger',
+          icon: 'alert-circle-outline',
+          duration: 3000
+        });
+      }
     }
   }
 

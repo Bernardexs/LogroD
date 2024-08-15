@@ -34,10 +34,19 @@ const routes: Routes = [
   {
     path: 'tareas-p',
     loadChildren: () => import('./paginas/tareas-p/tareas-p.module').then( m => m.TareasPPageModule)
-  },  {
+  },
+  {
     path: 'explorar',
     loadChildren: () => import('./paginas/explorar/explorar.module').then( m => m.ExplorarPageModule)
   },
+  {
+    path: 'notificaciones',
+    loadChildren: () => import('./paginas/notificaciones/notificaciones.module').then( m => m.NotificacionesPageModule)
+  },  {
+    path: 'productividad',
+    loadChildren: () => import('./paginas/productividad/productividad.module').then( m => m.ProductividadPageModule)
+  },
+
 
 
 

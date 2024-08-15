@@ -50,7 +50,7 @@
 
     <ion-item>
       <ion-label position="floating">Fecha de Fin</ion-label>
-      <ion-datetime displayFormat="MMM DD, YYYY HH:mm" formControlName="endTime"></ion-datetime>
+      <ion-datetime [min]="form.get('startTime')?.value" displayFormat="MMM DD, YYYY HH:mm" formControlName="endTime"></ion-datetime>
     </ion-item>
     <div *ngIf="form.get('endTime')?.errors && form.get('endTime')?.dirty" class="validators">
       <div *ngIf="form.get('endTime')?.errors?.['required']">Este campo es requerido.</div>
